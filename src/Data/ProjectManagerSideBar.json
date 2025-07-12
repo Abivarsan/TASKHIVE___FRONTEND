@@ -1,0 +1,21 @@
+[
+    {
+        "title": "Dashboard",
+        "icon": "bi-gear-fill",
+        "path" :"/ProjectManagerDashboard",
+        "roles" : ["2"]
+    },
+    {
+        "title": "Project List",
+        "icon": "bi bi-stack",
+        "path" :"/PMprojectListPage",
+        "roles":["1","2"]
+    },
+
+       {
+           "title": "User Accounts",
+           "path": "/userList",
+           "icon": "bi-person-fill",
+           "roles": ["1", "2"]
+       }
+]

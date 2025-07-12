@@ -1,0 +1,30 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body{
+  height: 100vh;
+}
+body{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  color: #fff;
+}
+
+.main{
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar{
+  margin-top:  46px;
+  width: 260px;
+  flex-shrink: 0;
+  background-color: #565E7B;
+  height: 95%;
+  overflow: auto;
+  position: fixed;
+  z-index: 2;
+}

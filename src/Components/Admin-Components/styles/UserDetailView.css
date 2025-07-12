@@ -1,0 +1,101 @@
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px;
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  text-align: center; 
+}
+
+.profile-details {
+  padding-top: 30px;
+  text-align: center;
+  margin-bottom: 20px;
+  color: black;
+  display: flex;
+  padding-bottom: 10px;
+}
+
+.profile-container img.card-img-top.rounded-circle {
+  width: 200px; 
+  height: 200px; 
+  object-fit: cover; 
+  border: 2px solid #ddd; 
+  padding: 5px; 
+  border-radius: 50%; 
+}
+
+.bottom-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.bottom-buttons .btn {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: white;
+  cursor: pointer;
+}
+
+.bottom-buttons .btn:hover {
+  opacity: 0.9;
+}
+
+.bottom-buttons .btn.back {
+  background-color: #6c757d; /* Ash color */
+}
+
+.bottom-buttons .btn.deactivate,
+.bottom-buttons .btn.update-role {
+  background-color: #007bff; /* Blue color */
+}
+
+.bottom-buttons .btn.reactivate {
+  background-color: #dc3545; /* Red color */
+}
+
+.user-details-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.user-details-table .label {
+  text-align: right;
+  padding: 6px 15px;
+  font-weight: bold;
+  
+  margin-top: 100px;
+}
+
+.user-details-table .value {
+  text-align: left;
+  padding: 8px 15px;
+}
+
+.user-details-table td {
+  border: none;
+}
+
+.image-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adjust the gap between image and text */
+}
+
+.profile-image {
+  max-width: 100px; /* Adjust image width */
+  max-height: 100px; /* Adjust image height */
+  border-radius: 5px;
+}
+
+.image-name {
+  font-size: 12px; /* Adjust font size */
+  margin: 0; /* Remove default margin */
+}

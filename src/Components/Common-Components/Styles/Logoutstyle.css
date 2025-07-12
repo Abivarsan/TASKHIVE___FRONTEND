@@ -1,0 +1,28 @@
+.logout{
+    padding: .75em 1em;
+    display: block;
+    transition: background-color .15s;
+    border-radius: 5px;
+    position: relative;
+    margin-top: 35%;
+  }
+  .logout:hover{
+    background-color: rgba(255, 255, 255, .1);
+  }
+  .logoutbutton{
+    display: inline-block;
+    font-size: 1.2em;
+  }
+  .logout i{
+    display: inline-block;
+    width: 1.5em;
+  }
+  .logoutbutton{
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: aliceblue;
+    text-decoration: none;
+  }
+  
+  

@@ -1,0 +1,51 @@
+.ProjectList {
+  width: 95%;
+  border-collapse: collapse;
+  border: 1px solid #c9c9c9; /* Darker border for contrast */
+  margin: 20px auto; /* Center the table with some margin */
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  transition: transform 0.3s ease-in-out; /* Smooth transition for table scaling */
+  
+}
+
+.ProjectList th,
+.ProjectList td {
+  padding: 15px; /* Increased padding for better spacing */
+  text-align: left;
+  border-bottom: 1px solid #dfdfdf; /* Darker border bottom for contrast */
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif; /* Professional sans-serif font */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background and text color */
+ 
+}
+
+.ProjectList th {
+  background-color: #0a1127; /* Dark background for header */
+  color: #ffffff; /* White text color for header */
+  font-weight: bold; /* Bold font weight for header */
+  text-transform: uppercase; /* Uppercase text for header */
+}
+
+.ProjectList td {
+  color: #d1d1e0; /* Light gray text color for table data */
+  padding-left: 40px; /* Consistent padding */
+}
+
+.ProjectList tbody tr:nth-child(even) {
+  background-color: #18213f; /* Slightly different dark background for even rows */
+}
+
+.ProjectList tbody tr:nth-child(odd) {
+  background-color: #323a5a; /* Dark background for odd rows */
+}
+
+.ProjectList tbody tr {
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition for background color and transform */
+  
+}
+
+.ProjectList tbody tr:hover {
+  background-color: #0a1127; /* Darker background color on hover */
+}
+
+
+

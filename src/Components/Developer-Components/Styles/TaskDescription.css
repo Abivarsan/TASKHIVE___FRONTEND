@@ -1,0 +1,32 @@
+.TaskDescription{
+    background-color: white;
+    color: black;
+    height:630px;
+    width: 1150px;
+    margin-right: 30px;
+    border-radius: 10px;
+    padding: 20px;
+
+}
+
+.h2{
+color: black;
+
+}
+
+.h5{
+color: darkslategray;
+}
+
+.p{
+    color: black;
+   
+}
+
+.Taskdetails{
+    padding-left: 50px;
+}
+
+.TaskProjectdetails{
+    padding-left: 50px;
+}

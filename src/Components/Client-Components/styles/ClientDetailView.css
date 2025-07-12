@@ -1,0 +1,84 @@
+/* style.css */
+
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+    text-align: center; 
+  }
+  
+  .profile-details {
+    text-align: center;
+    margin-bottom: 20px;
+    color: black;
+    display: flex;
+  }
+
+  .profile-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: #ffffff;
+    padding: 10px;
+  }
+  
+  /* .profile-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; 
+    margin-bottom: 20px;
+  }
+   */
+  .bottom-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .bottom-buttons .btn {
+    margin: 0 10px;
+  }
+  
+
+.user-details-table {
+  border-collapse: collapse;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.user-details-table .label {
+  text-align: right;
+  padding: 4px 8px;
+  font-weight: bold;
+}
+
+.user-details-table .value {
+  text-align: left;
+  padding: 4px 8px;
+}
+
+.user-details-table td {
+  border: none;
+}
+
+.image-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adjust the gap between image and text */
+}
+
+.profile-image {
+  max-width: 100px; /* Adjust image width */
+  max-height: 100px; /* Adjust image height */
+  border-radius: 5px;
+}
+
+.image-name {
+  font-size: 12px; /* Adjust font size */
+  margin: 0; /* Remove default margin */
+}

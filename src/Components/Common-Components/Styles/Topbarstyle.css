@@ -1,0 +1,44 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  color: #fff;
+}
+.appname{
+font-family:'Times New Roman', Times, serif;
+ position: absolute;
+ margin-top: 2px;
+ margin-left: 10%;
+ font-size: 40px;
+}
+.topbar{
+  display: block;
+  background-color: #565E7B;
+  width: 100%;
+  height: 62px;
+  position: fixed;
+  z-index: 2;
+}
+
+.topbaritems {
+margin-left: 75%;
+padding-top: 17px;
+display: block;
+width: 7em;
+}
+
+.profile{
+margin-left: 6%;
+padding-left: 130px;
+margin-top: -45px;
+}
+.topbaritems a{
+padding: 15px;
+color: #fff;
+}
+
+

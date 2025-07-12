@@ -1,0 +1,85 @@
+
+[
+    {
+        "title": "Dashboard",
+        "icon": "bi-gear-fill",
+        "path" :"/adminDashboard",
+        "roles" : ["1"]
+    },
+      {  "title": "User",
+         "icon": "bi-person-fill",
+        "childrens": [
+            {
+                "title": "User List",
+                "path": "/userList",
+                "roles": ["1", "2"]
+            },
+            {
+                "title": "User Registration",
+                "path": "/userCreation",
+                "roles": ["1"]
+            },
+            {
+                "title": "User Management",
+                "path": "/userManagement",
+                "roles": ["1"]
+            }
+            
+        ]
+    },
+    {
+        "title": "Projects",
+        "icon": "bi bi-stack",
+        "childrens": [
+            {
+                "title": "Project List",
+                "path": "/projectlist"
+            },
+            {
+                "title": "Create Project",
+                "path":"/projectcreation"
+            }
+        ]
+    },
+    {
+        "title": "Finance",
+        "icon": "bi bi-bank2",
+        "roles": ["1"],
+        "childrens": [
+            {
+                "title": "New budget",
+                "path": "/budget",
+                "roles": ["1"]
+            },
+            {
+                "title": "Invoice",
+                "path": "/transaction",
+                "roles": ["1"]  
+            }
+     
+        ]
+    },
+    {
+        "title": "Client",
+        "icon": "bi bi-person-lines-fill",
+        "roles": ["1"],
+        "childrens": [
+            {
+                "title": "Client register",
+                "path": "/clientCreation"
+            },
+            {
+                "title": "Client list",
+                "path": "/clientlist"
+            },
+            {
+                "title": "Payments",
+                "path": "/payments"   
+            },
+            {
+                "title": "Send mail",
+                "path": "/sendemail"   
+            }
+        ]
+    }
+]
