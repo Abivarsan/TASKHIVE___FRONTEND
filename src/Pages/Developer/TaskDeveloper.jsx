@@ -13,7 +13,7 @@ function TaskDeveloper() {
       <DeveloperSidebar/>
 
       <div className="Content">
-      <TaskHeader/>
+   
       <Tasklist/>
    
         </div>

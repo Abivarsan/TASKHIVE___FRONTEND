@@ -14,7 +14,6 @@ function Content() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-
   
   useEffect(() => {
     const userid = getLoggedUserId();
@@ -32,7 +31,6 @@ function Content() {
         setLoading(false);
       }
     };
-
 
     const developerData = async () => {
       try {
@@ -64,7 +62,6 @@ function Content() {
       }
     };
 
-
     const TaskCount = async () => {
       try {
         //DeveloperId == 5
@@ -80,12 +77,6 @@ function Content() {
       }
     };
 
-
-
-
-
-
-
     fetchData();
     developerData();
    ProjectCount();
@@ -100,8 +91,6 @@ function Content() {
     selectedId = id;
     navigate('/TeamDescriptionDeveloper',{state:{selectedId:selectedId}});
   };
-
-
 
     return (
 <div className='ContentMainContent'>
@@ -119,16 +108,8 @@ function Content() {
 <div className='tot'><h4>Total Tasks</h4></div>
 <div className='count'><h1>{task}</h1></div>
 </div>
-
-
-
   </div>
-
   </div>
-
-
-
-
 <div className='TeamContent'>
 <div className='MainTitle'><h2>Teams</h2></div>
 <div className='Newtable'>
@@ -161,9 +142,6 @@ function Content() {
       )}
     </div>
     </div>
-
-
-
 </div>
 
 )

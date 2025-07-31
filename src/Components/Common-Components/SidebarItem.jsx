@@ -1,65 +1,84 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./Styles/Sidebaritemstyle.css";
 import { useAuth } from "../../Auth/AuthContext";
 
 export default function SidebarItem({ item }) {
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
-
-  
+  const location = useLocation();
 
   // Check if the user has access to the item
   const hasAccess = (item) => {
     if (!item.roles) return true;
-  
-    return item.roles.includes(String(user.userCategoryId));
+    return item.roles.includes(String(user?.userCategoryId));
   };
 
-  // DEBUG: Log access check result
-  const accessResult = hasAccess(item);
+  // Check if current path matches item path
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
 
+  // Check if any child is active
+  const hasActiveChild = (children) => {
+    if (!children) return false;
+    return children.some(child => isActive(child.path));
+  };
 
-  if (!accessResult) {
-  
+  if (!hasAccess(item)) {
     return null;
   }
 
-  const handleToggle = () => {
-    
+  const handleToggle = (e) => {
+    e.preventDefault();
     setOpen(!open);
-  
   };
 
+  // If item has children (dropdown)
   if (item.childrens) {
-    
     return (
-      <div className={open ? "sidebar-item open" : "sidebar-item"}>
-        <div className="sidebar-title" onClick={handleToggle}>
+      <div className={`sidebar-item ${open ? 'open' : ''}`}>
+        <div 
+          className={`sidebar-title ${hasActiveChild(item.childrens) ? 'active' : ''}`}
+          onClick={handleToggle}
+        >
           <span>
-            {item.icon && <i className={item.icon}></i>}
+            <i className={item.icon}></i>
             {item.title}
           </span>
-          <i 
-            className="bi-chevron-down toggle-btn" 
-            style={{color: 'white'}} // Remove red color - it's working now
-          ></i>
-</div>
+          <div className="toggle-btn"></div>
+        </div>
+        
         <div className="sidebar-content">
-          {item.childrens.map((child, index) => {
-          
-            return <SidebarItem key={index} item={child} />;
-          })}
+          {item.childrens.map((child, index) => (
+            hasAccess(child) && (
+              <Link
+                key={index}
+                to={child.path}
+                className={`sidebar-item plain ${isActive(child.path) ? 'active' : ''}`}
+              >
+                {child.icon && <i className={child.icon}></i>}
+                {child.title}
+              </Link>
+            )
+          ))}
         </div>
       </div>
     );
-  } else {
-    
-    return (
-      <Link to={item.path || "#"} className="sidebar-item plain">
-        {item.icon && <i className={item.icon}></i>}
-        {item.title}
-      </Link>
-    );
   }
+
+  // Single item (no children)
+  return (
+    <div className="sidebar-item">
+      <Link 
+        to={item.path} 
+        className={`sidebar-title ${isActive(item.path) ? 'active' : ''}`}
+      >
+        <span>
+          <i className={item.icon}></i>
+          {item.title}
+        </span>
+      </Link>
+    </div>
+  );
 }

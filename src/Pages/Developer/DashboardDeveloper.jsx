@@ -16,13 +16,7 @@ function DashboardDeveloper() {
       <Header/>
    
      <Content/>
-  
-
-
         </div>
-    
-    
-    
     </div>
     </div>
   )

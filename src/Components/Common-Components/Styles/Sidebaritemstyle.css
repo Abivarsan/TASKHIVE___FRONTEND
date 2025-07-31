@@ -1,72 +1,220 @@
-/* COMPLETE PROPER CSS FOR SIDEBAR */
+/* Sidebaritemstyle.css - Modern Material UI-inspired CSS */
 
 .sidebar-item {
-  padding: .75em 1em;
-  display: block;
-  transition: background-color .15s;
-  border-radius: 5px;
+  margin: 4px 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .sidebar-item:hover {
-  background-color: rgba(255, 255, 255, .1);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
 }
 
+/* Sidebar Title (Main Item) */
 .sidebar-title {
   display: flex;
-  font-size: 1.2em;
+  align-items: center;
   justify-content: space-between;
-  cursor: pointer; /* Make the entire title clickable */
+  padding: 14px 20px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  border-radius: 12px;
+  position: relative;
+}
+
+.sidebar-title:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  text-decoration: none;
+}
+
+.sidebar-title.active {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+/* Icon styling */
+.sidebar-title span {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
 .sidebar-title span i {
-  display: inline-block;
-  width: 1.5em;
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+  opacity: 0.9;
 }
 
-.sidebar-title .toggle-btn {
-  cursor: pointer;
-  transition: transform .3s;
+.sidebar-title.active span i {
+  opacity: 1;
 }
 
-.sidebar-title .toggle-btn:before {
-  content: "▼"; /* Fallback arrow if Bootstrap Icons don't load */
-  font-size: 0.8em;
+/* Toggle button for dropdown */
+.toggle-btn {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  transition: transform 0.3s ease, color 0.3s ease;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
 }
 
-/* Hide the fallback arrow if Bootstrap Icons are loaded */
-.sidebar-title .toggle-btn.bi-chevron-down:before {
-  content: "";
+.toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
-.sidebar-item.open > .sidebar-title .toggle-btn {
+.toggle-btn::before {
+  content: "▼";
+  font-size: 10px;
+}
+
+/* Rotate toggle button when open */
+.sidebar-item.open .toggle-btn {
   transform: rotate(180deg);
+  color: white;
 }
 
-/* Child menu container - starts hidden */
+/* Child menu container */
 .sidebar-content {
-  padding-top: .25em;
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease-out; /* Smooth animation */
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 0 0 12px 12px;
+  margin-top: 2px;
 }
 
-/* Show child menus when parent is open */
-.sidebar-item.open > .sidebar-content {
-  max-height: 300px; /* Adjust as needed for your menu height */
+.sidebar-item.open .sidebar-content {
+  max-height: 400px;
 }
 
+/* Child items styling */
 .sidebar-item.plain {
-  color: #fff;
+  display: block;
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
-  padding-left: 2em; /* Indent child items */
+  padding: 12px 20px 12px 54px;
+  font-size: 14px;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin: 4px 12px;
+  position: relative;
+}
+
+.sidebar-item.plain::before {
+  content: '';
+  position: absolute;
+  left: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  transition: all 0.3s ease;
 }
 
 .sidebar-item.plain:hover {
-  text-decoration: underline;
-  background-color: rgba(255, 255, 255, .15);
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  text-decoration: none;
+  transform: translateX(8px);
 }
 
-.sidebar-item.plain i {
-  display: inline-block;
-  width: 1.7em;
+.sidebar-item.plain:hover::before {
+  background: #1976d2;
+  transform: translateY(-50%) scale(1.5);
 }
+
+.sidebar-item.plain.active {
+  color: #1976d2;
+  background: rgba(25, 118, 210, 0.15);
+  font-weight: 500;
+}
+
+.sidebar-item.plain.active::before {
+  background: #1976d2;
+  transform: translateY(-50%) scale(1.5);
+}
+
+/* Icon styling for child items */
+.sidebar-item.plain i {
+  font-size: 16px;
+  width: 20px;
+  margin-right: 12px;
+  opacity: 0.8;
+}
+
+.sidebar-item.plain:hover i,
+.sidebar-item.plain.active i {
+  opacity: 1;
+}
+
+/* Animation for content appearance */
+.sidebar-item {
+  animation: slideInLeft 0.3s ease-out;
+  animation-fill-mode: both;
+}
+
+.sidebar-item:nth-child(1) { animation-delay: 0.1s; }
+.sidebar-item:nth-child(2) { animation-delay: 0.2s; }
+.sidebar-item:nth-child(3) { animation-delay: 0.3s; }
+.sidebar-item:nth-child(4) { animation-delay: 0.4s; }
+.sidebar-item:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sidebar-title {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  
+  .sidebar-item.plain {
+    padding: 10px 16px 10px 44px;
+    font-size: 13px;
+  }
+  
+  .sidebar-item.plain::before {
+    left: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-title {
+    padding: 10px 12px;
+  }
+  
+  .sidebar-item.plain {
+    padding: 8px 12px 8px 36px;
+  }
+  
+  .sidebar-item.plain::before {
+    left: 24px;
+  }
+}
+  

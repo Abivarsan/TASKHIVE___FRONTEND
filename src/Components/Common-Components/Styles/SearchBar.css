@@ -1,0 +1,72 @@
+/* Searchbar.css - Modern Material UI-inspired CSS */
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 300px;
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 0;
+  width: 100%;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+}
+
+.search-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  outline: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.search-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.search-button:active {
+  transform: scale(0.95);
+}
+
+.search-icon {
+  font-size: 14px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .search-bar {
+    min-width: 200px;
+  }
+  
+  .search-input {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-bar {
+    min-width: 150px;
+  }
+}
