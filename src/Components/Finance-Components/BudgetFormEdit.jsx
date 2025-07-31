@@ -67,7 +67,7 @@ function BudgetFormEdit() {
         Date: date
       };
 
-      const url = `https://localhost:44339/api/Budget/register/Projects/${projectId}`;
+      const url = `http://localhost:5228/api/Budget/register/Projects/${projectId}`;
 
       try {
         const response = await axios.post(url, budgetdata);

@@ -25,7 +25,7 @@ function Invoice(props) {
 
    const fetchTransaction= async (projectId)=>{
     try{
-        const response= await axios.get(`https://localhost:44339/api/Transaction/Projects/${projectId}/register`)
+        const response= await axios.get(`http://localhost:5228/api/Transaction/Projects/${projectId}/register`)
         console.log("Transacdara",JSON.stringify(response.data))
         setTransacdata(response.data)
        
@@ -36,7 +36,7 @@ function Invoice(props) {
 const deletetransac =async (transacId)=>{
   try{
     if(window.confirm("Are you sure you need to delete this item"))
-    await axios.delete(`https://localhost:44339/api/Transaction/Transaction/${transacId}/${projectId}/register`);
+    await axios.delete(`http://localhost:5228/api/Transaction/Transaction/${transacId}/${projectId}/register`);
     setTransacdata(transacdata.filter(item => item.transacId !== transacId));
     alert("Deleted Successfully")
   }catch(error){

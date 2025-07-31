@@ -56,7 +56,7 @@ export default function ProjectCreationForm() {
 
   const [data, setData] = useState([]);
 
-  const url = "https://localhost:44339/api/GetProjectManagerName";
+  const url = "http://localhost:5228/api/GetProjectManagerName";
 
   const getPmanager = async () => {
     try {
@@ -72,7 +72,7 @@ export default function ProjectCreationForm() {
 
   const [clients, setClients] = useState([]);
 
-  const url2 = "https://localhost:44339/api/GetClientNames";
+  const url2 = "http://localhost:5228/api/GetClientNames";
   const getClients = async () => {
     try {
       const response2 = await axios.get(url2);
@@ -203,7 +203,7 @@ export default function ProjectCreationForm() {
   //email data
 
   const SendEmail = async () => {
-    const urlEmail = `https://localhost:44339/api/EmailSend?adminId=${loggedAdminId}&PmId=${projectManagerID}&projectName=${projectName}`;
+    const urlEmail = `http://localhost:5228/api/EmailSend?adminId=${loggedAdminId}&PmId=${projectManagerID}&projectName=${projectName}`;
     if (window.confirm('Do you want to send a Email?')){
       axios.post(urlEmail, [])
     .then(alert("Email sent"))
@@ -255,7 +255,7 @@ export default function ProjectCreationForm() {
    
       console.log(data);
 
-      const url = `https://localhost:44339/api/CreateProject?id=${userid}`;
+      const url = `http://localhost:5228/api/CreateProject?id=${userid}`;
 
       axios
         .post(url, data)

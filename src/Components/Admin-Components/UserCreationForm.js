@@ -46,7 +46,7 @@ export default function UserCreationForm() {
   };
 
       useEffect(() => {
-    axios.get(`http://localhost:5228/api/User/UsersCategories`) 
+    axios.get('http://localhost:5228/api/UserCategory') 
       .then(response => {
         setUsersCategories(response.data);
       })
@@ -56,7 +56,7 @@ export default function UserCreationForm() {
   }, []);
 
   useEffect(() => {
-    axios.get(`http://localhost:5228/api/User/JobRoles`) 
+    axios.get('http://localhost:5228/api/JobRole') 
       .then(response => {
         setJobRoles(response.data);
       })

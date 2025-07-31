@@ -64,22 +64,22 @@ function App() {
        <AuthProvider>
       <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LoginForm/>}></Route>
-        <Route path="/resetpassword" element={<ResetPassword/>}></Route>
+        <Route path="/" element={<LoginForm/>}/>
+        <Route path="/resetpassword" element={<ResetPassword/>}/>
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/editProfile/:userId" element={<EditProfile />} />
 
         <Route element={<ProtectedRoute allowedRoles={['1']} />}>
               <Route path="/adminDashboard" element={<AdminDashboard />} />
-              <Route path="/usercreation" element={<UserCreation/>}></Route>
-              <Route path="/budget" element ={<Budgetplan/>}></Route>
-              <Route path="/transaction" element ={<TransactionPage/>}></Route>
+              <Route path="/userCreation" element={<UserCreation/>}/>
+              <Route path="/budget" element ={<Budgetplan/>}/>
+              <Route path="/transaction" element ={<TransactionPage/>}/>
              
 
 
-              <Route path="/clientCreation" element={<ClientCreation/>}></Route>
-              <Route path="/clientList" element={<ViewClientList/>}></Route>
-              <Route path="/clientProfilePage/:clientId" element={<ViewClientDetail/>}></Route>
+              <Route path="/clientCreation" element={<ClientCreation/>}/>
+              <Route path="/clientList" element={<ViewClientList/>}/>
+              <Route path="/clientProfilePage/:clientId" element={<ViewClientDetail/>}/>
 
               <Route path="/userManagement" element={<UserManagement/>} />
               <Route path="/userProfilePage/:userId" element={<ViewUserDetail />} />
@@ -89,13 +89,13 @@ function App() {
 
         <Route element={<ProtectedRoute allowedRoles={['1', '2']} />}>
               <Route path="/userList" element={<ViewUserList />} />             
-              <Route path="/financedigram" element={<FinanceDigram/>}></Route>
+              <Route path="/financedigram" element={<FinanceDigram/>}/>
               <Route path="/taskList" element={<TaskList/>}></Route>
-              <Route path="/taskDetailsPage" element={<TaskDetailsPage/>}></Route>
+              <Route path="/taskDetailsPage" element={<TaskDetailsPage/>}/>
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['2']} />}>
-              <Route path="/ProjectManagerDashboard" element={<ProjectManagerDashboard/>}></Route>
+              <Route path="/ProjectManagerDashboard" element={<ProjectManagerDashboard/>}/>
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['3']} />}>
@@ -136,26 +136,21 @@ function App() {
         <Route path="/ProjectModuleReport" element={<ProjectModuleReport/>}></Route>
         <Route path="/TeamDescriptionDeveloper" element={<TeamDescriptionDeveloper/>}></Route>
         <Route path="/ProjectFileViewPage" element={<ProjectFileViewPage/>}></Route>
-        
-
         <Route path="/PMprojectListPage" element={<PMprojectListPage/>}></Route>
         <Route path="/PMprojectDetailsPage" element={<PMprojectDetailsPage/>}></Route>
         <Route path="/PMtaskCreationPage" element={<PMtaskCreationPage/>}></Route>
         <Route path="/PMtaskListPage" element= {<PMtaskListPage />}></Route>
         <Route path="/PMaddDevelopersPage" element = {<PMaddDevelopersPage />}></Route>
         <Route path="PMtaskDetailsPage" element = {<PMtaskDetailsPage />}></Route>
-
         <Route path="/taskList" element={<TaskList/>}></Route>
         <Route path="/fullTaskListPage" element = {<FullTaskListPage/>}></Route>
         <Route path="/pMFullTaskListPage" element = {<PMFullTaskViewPage/>}></Route>
-
           <Route path="/updateProjectPage" element={<UpdateProjectPage/>}></Route>
           <Route path="/updateTaskPage" element={<UpdateTaskPage/>}></Route>
           <Route path="/budgetcreation" element={<BudgetEditPage/>}></Route>
 
       </Routes>
-        <Routes>         
-        </Routes>
+      
       </BrowserRouter>
       </AuthProvider>
     </div>

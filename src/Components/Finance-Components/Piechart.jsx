@@ -17,7 +17,7 @@ export default function PieCharts(props) {
 
   const fetchDigramData = async (projectId) => {
     try {
-      const response = await axios.get(`https://localhost:44339/api/FinanceDigram/Projects/${projectId}/register`);
+      const response = await axios.get(`http://localhost:5228/api/FinanceDigram/Projects/${projectId}/register`);
       const data = response.data;
       console.log(data)
       setRemaining(data.remaining);

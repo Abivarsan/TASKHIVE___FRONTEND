@@ -10,7 +10,7 @@ export const handleLogout = async (navigate, logout) => {
     try {
       const refreshToken = localStorage.getItem("refreshToken");
 
-      await apiRequest("http://localhost:5228/api/Auth/logout", "POST", { refreshToken });
+      await apiRequest(`http://localhost:5228/api/Auth/logout`, "POST", { refreshToken });
 
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");

@@ -16,7 +16,7 @@ export default function BarsDataset() {
 
   const getData = async (year) => {
     try {
-      const response = await axios.get(`https://localhost:44339/api/TotalIncomeExpence?year=${year}`);
+      const response = await axios.get(`http://localhost:5228/api/TotalIncomeExpence?year=${year}`);
       console.log(response.data);
       setIncomeExpenseData(transformData(response.data));
     } catch (error) {

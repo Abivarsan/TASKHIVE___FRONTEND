@@ -46,7 +46,7 @@ export default function ClientCreationForm() {
     };
   
     try {
-      const response = await apiRequest('https://localhost:44339/api/Client/register', 'POST', data);
+      const response = await apiRequest('http://localhost:5228/api/Client/register', 'POST', data);
       console.log('API Response:', response);
   
       const randomPassword = response;
@@ -71,9 +71,9 @@ export default function ClientCreationForm() {
   };
   
   const sendEmail = (password, userName, userEmail) => {
-    const serviceID = 'service_re8sg8u';
-    const templateID = 'template_0y9c7xm';
-    const publicKey = 'T4Kg7zhw6fdHfxh6K'; 
+     const serviceID = 'service_42yhret';
+    const templateID = 'template_qtrb6ll';
+    const publicKey = 'WcuGZ2ivU-n9OBxuF';
 
     const templateParams = {
       user_name: userName,

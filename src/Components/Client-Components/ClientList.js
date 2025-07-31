@@ -14,7 +14,7 @@ export default function ClientListComponent() {
 
   const fetchData = async () => {
     try {
-      const result = await apiRequest("https://localhost:44339/api/Client/list");
+      const result = await apiRequest("http://localhost:5228/api/Client/list");
       setData(result);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -37,7 +37,7 @@ export default function ClientListComponent() {
       fetchData(); // If search term is empty, fetch all data
     } else {
       try {
-        const result = await apiRequest(`https://localhost:44339/api/Client/search?term=${searchTerm}`);
+        const result = await apiRequest(`http://localhost:5228/api/Client/search?term=${searchTerm}`);
         setData(result);
       } catch (error) {
         console.error("Error searching data:", error);

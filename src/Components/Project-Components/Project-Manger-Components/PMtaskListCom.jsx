@@ -19,7 +19,7 @@ export default function PMtaskListCom() {
   const [list, setList] = useState([]);
 
   const GetList = async () => {
-    const url = `https://localhost:44339/api/TaskList?ProId=${ProId}&DevId=${DevId}`;
+    const url = `http://localhost:5228/api/TaskList?ProId=${ProId}&DevId=${DevId}`;
 
     try {
         const response = await axios.get(url);

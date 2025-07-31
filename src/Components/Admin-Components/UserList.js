@@ -27,7 +27,7 @@ export default function UserListComponent() {
 
   const fetchData = async () => {
     try {
-      const result = await apiRequest(`http://localhost:5228/api/User/list`);
+      const result = await apiRequest("http://localhost:5228/api/User/list");
       setData(result);
     } catch (error) {
       console.error("Error fetching data:", error);

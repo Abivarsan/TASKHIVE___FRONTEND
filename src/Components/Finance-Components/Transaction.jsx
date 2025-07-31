@@ -25,7 +25,7 @@ function Transaction() {
 
     const fetchProjects = async () => {
         try {
-            const response = await axios.get(`https://localhost:44339/api/Transaction/register`);
+            const response = await axios.get(`http://localhost:5228/api/Transaction/register`);
             console.log("Projects:", response.data); // Debugging: log fetched projects
             setProjects(response.data);
         } catch (error) {
@@ -35,7 +35,7 @@ function Transaction() {
 
     const fetchTransactions = async (projectId) => {
         try {
-            const response = await axios.get(`https://localhost:44339/api/Transaction/Project/${projectId}/transactions`);
+            const response = await axios.get(`http://localhost:5228/api/Transaction/Project/${projectId}/transactions`);
             console.log("Transactions:", response.data); // Debugging: log fetched transactions
             setTransactions(response.data);
         } catch (error) {
@@ -78,7 +78,7 @@ function Transaction() {
             Date: date
         };
 
-        const url = `https://localhost:44339/api/Transaction/Project/${selectedProject}/register`;
+        const url = `http://localhost:5228/api/Transaction/Project/${selectedProject}/register`;
 
         try {
             const response = await axios.post(url, transacdata);

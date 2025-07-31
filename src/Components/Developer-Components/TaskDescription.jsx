@@ -21,7 +21,7 @@ export default function TaskDescription() {
 
   const getData = async () => {
     try {
-      const response = await axios.get(`https://localhost:44339/api/DeveloperTask/TaskDescription/${selectedId}`);
+      const response = await axios.get(`http://localhost:5228/api/DeveloperTask/TaskDescription/${selectedId}`);
       setTaskDetails(response.data);
       setIsLoading(false);
       console.log(response.data);

@@ -11,7 +11,7 @@ function Projectlist() {
 
   useEffect(() => {
     axios
-      .get("https://localhost:44319/api/ViewProjectList")
+      .get("http://localhost:5228/api/ViewProjectList")
       .then((result) => setData(result.data))
       .catch((e) => console.log(e));
   }, []);

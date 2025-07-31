@@ -12,7 +12,7 @@ export default function FullTaskListCom() {
     const ProId = location.state.selectedId;
 
     const GetList = async () => {
-        const url = `https://localhost:44339/api/FullTaskList?ProId=${ProId}`;
+        const url = `http://localhost:5228/api/FullTaskList?ProId=${ProId}`;
 
         try {
             const response = await axios.get(url);

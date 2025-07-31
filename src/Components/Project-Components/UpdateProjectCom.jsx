@@ -31,7 +31,7 @@ export default function UpdateProjectCom() {
   const [dueDate, setDueDate] = useState("");
 
   const GetOldData = async () => {
-    const url = `https://localhost:44339/api/CreateProject/GetDetails?ProId=${proId}`;
+    const url = `http://localhost:5228/api/CreateProject/GetDetails?ProId=${proId}`;
 
     try {
       const response = await axios.get(url);
@@ -132,7 +132,7 @@ export default function UpdateProjectCom() {
         ProjectManagerId: 0
       };
 
-      const url = `https://localhost:44339/api/CreateProject/${proId}`;
+      const url = `http://localhost:5228/api/CreateProject/${proId}`;
 
       axios
         .put(url, data)

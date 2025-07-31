@@ -18,7 +18,7 @@ export default function TeamDescription() {
 
   const getData = async () => {
     try {
-      const response = await axios.get(`https://localhost:44339/api/DeveloperTeam/TeamDescription/${selectedId}`);
+      const response = await axios.get(`http://localhost:5228/api/DeveloperTeam/TeamDescription/${selectedId}`);
       setTeamDetails(response.data);
       setIsLoading(false);
       console.log(response.data);

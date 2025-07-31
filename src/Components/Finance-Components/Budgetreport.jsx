@@ -34,7 +34,7 @@ export default function ProjectCreationForm() {
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get(`https://localhost:44339/api/Budget/register`);
+      const response = await axios.get(`http://localhost:5228/api/Budget/register`);
       console.log("Projects:", response.data); 
       setProjects(response.data);
     } catch (error) {
@@ -44,7 +44,7 @@ export default function ProjectCreationForm() {
 
   const fetchBudgetData = async (projectid) => {
     try {
-      const response = await axios.get(`https://localhost:44339/api/Budget/register/Projects/${projectid}`);
+      const response = await axios.get(`http://localhost:5228/api/Budget/register/Projects/${projectid}`);
       console.log("Budget data:", response.data);
       setBudgetData(response.data);
       setBudgetId(response.data.budgetId);
@@ -66,7 +66,7 @@ export default function ProjectCreationForm() {
   const deletebudget =async (selectedProject)=>{
     try{
       if(window.confirm("Are you sure you need to delete this item")){
-      await axios.delete(`https://localhost:44339/api/Budget?projectid=${selectedProject}`);
+      await axios.delete(`http://localhost:5228/api/Budget?projectid=${selectedProject}`);
      // setBudgetData(budgetData.filter(item => item.selectedProject !== selectedProject));
       alert("Deleted Successfully");
       window.location.reload();

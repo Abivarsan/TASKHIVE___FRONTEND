@@ -13,7 +13,7 @@ const ClientDetailView = () => {
 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`https://localhost:44339/api/Client/${clientId}`);
+      const response = await axios.get(`http://localhost:5228/api/Client/${clientId}`);
       setUserData(response.data);
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -34,7 +34,7 @@ const ClientDetailView = () => {
     }
 
     try {
-      await axios.post('https://localhost:44339/api/Client/deactivate-client', { clientId });
+      await axios.post('http://localhost:5228/api/Client/deactivate-client', { clientId });
       alert("User deactivated successfully.");
       setErrorMessage(null);
       // Refetch the user data
@@ -51,7 +51,7 @@ const ClientDetailView = () => {
     }
 
     try {
-      await axios.post('https://localhost:44339/api/Client/reactivate-client', { clientId });
+      await axios.post('http://localhost:5228/api/Client/reactivate-client', { clientId });
       alert("User reactivated successfully.");
       setErrorMessage(null);
       // Refetch the user data

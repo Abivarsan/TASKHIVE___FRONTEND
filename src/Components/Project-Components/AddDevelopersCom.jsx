@@ -34,7 +34,7 @@ export default function AddDevelopersCom() {
   const [developers, setDevelopers] = useState([]);
 
   const GetAddedDevelopers = async () => {
-    const url = `https://localhost:44339/api/CheckAddedDevelopers/${selectedId}`;
+    const url = `http://localhost:5228/api/CheckAddedDevelopers/${selectedId}`;
     try {
       const response = await axios.get(url); 
       setDevelopers(response.data);
@@ -156,7 +156,7 @@ export default function AddDevelopersCom() {
   //email data
 
   const SendEmail = async () => {
-    const urlEmail = `https://localhost:44339/api/EmailSend/DeveloperAssign?projectId=${selectedId}`;
+    const urlEmail = `http://localhost:5228/api/EmailSend/DeveloperAssign?projectId=${selectedId}`;
     if (window.confirm('Do you want to send Emails?')){
       axios.post(urlEmail, add)
     .then(alert("Email sent"))
@@ -171,7 +171,7 @@ export default function AddDevelopersCom() {
         projectId: selectedId,
         developerId: add[i],
       };
-      const url = "https://localhost:44339/api/AddDevelopers";
+      const url = "http://localhost:5228/api/AddDevelopers";
 
       axios
         .post(url, data)

@@ -33,7 +33,7 @@ export default function PMprojectDetailsCom() {
 
     try {
       const response = await axios.get(
-        `https://localhost:44339/api/AdminProjectView/${selectedId}`
+        `http://localhost:5228/api/AdminProjectView/${selectedId}`
       );
       setProjectData(response.data);
       console.log(projectData);
@@ -46,7 +46,7 @@ export default function PMprojectDetailsCom() {
   const getAssignedDev = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:44339/api/GetAssignedDevelopers/${selectedId}`
+        `http://localhost:5228/api/GetAssignedDevelopers/${selectedId}`
       );
       setDevData(response.data);
       console.log(devData);
@@ -95,12 +95,11 @@ export default function PMprojectDetailsCom() {
     const formData = new FormData();
     formData.append("file", basicInfo);
 
-    const url1 = `https://localhost:44339/api/ProjectFileUpload/BasicInfo?ProID=${selectedId}`;
+    const url1 = `http://localhost:5228/api/ProjectFileUpload/BasicInfo?ProID=${selectedId}`;
 
-    
-      axios.post(url1, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
+    axios.post(url1, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
         },
       }).then(() => {
         alert("Upload Successful");
@@ -122,7 +121,7 @@ export default function PMprojectDetailsCom() {
   const [basicNames, setBasicNames] = useState([]);
 
   const GetBasicFileNames = async () => {
-    const urlGetBasic = `https://localhost:44339/api/ProjectFileView/Basic?id=${selectedId}`;
+    const urlGetBasic = `http://localhost:5228/api/ProjectFileView/Basic?id=${selectedId}`;
 
     try {
       const response = await axios.get(urlGetBasic);
@@ -149,7 +148,7 @@ export default function PMprojectDetailsCom() {
     const formData = new FormData();
     formData.append("file", timeLineInfo);
 
-    const url2 = `https://localhost:44339/api/ProjectFileUpload/TimeLine?ProID=${selectedId}`;
+    const url2 = `http://localhost:5228/api/ProjectFileUpload/TimeLine?ProID=${selectedId}`;
 
     try {
       axios.post(url2, formData, {
@@ -170,7 +169,7 @@ export default function PMprojectDetailsCom() {
   const [timelineNames, setTimeLineNames] = useState([]);
 
   const GetTimeLineNames = async () => {
-    const urlGetTimeLine = `https://localhost:44339/api/ProjectFileView/TimeLine?id=${selectedId}`;
+    const urlGetTimeLine = `http://localhost:5228/api/ProjectFileView/TimeLine?id=${selectedId}`;
 
     try {
       const response = await axios.get(urlGetTimeLine);
@@ -282,9 +281,7 @@ export default function PMprojectDetailsCom() {
   //---------------------**********DOWNLOAD PROJECT FILES***********------------------------
 
   const download = async (filePath, fileName) => {
-    const urlDownload = `https://localhost:44339/api/ProjectFileDownload/DownloadProjectFile?FilePath=${filePath}&FileName=${fileName}`;
-    
-    
+    const urlDownload = `http://localhost:5228/api/ProjectFileDownload/DownloadProjectFile?FilePath=${filePath}&FileName=${fileName}`;
 
     try {
       // const response = await axios.get(url2);

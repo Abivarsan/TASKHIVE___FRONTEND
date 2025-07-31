@@ -30,7 +30,7 @@ const ForgotPassword = () => {
     console.log("UserName:", userName);
 
     try {
-      const response = await apiRequest('https://localhost:44339/api/Account/password-forgot', 'POST', data);
+      const response = await apiRequest('http://localhost:5228/api/Account/password-forgot', 'POST', data);
       console.log('API Response:', response);
 
       const randomPassword = response; // Assuming response contains the random password

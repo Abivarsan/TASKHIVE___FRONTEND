@@ -28,7 +28,7 @@ export default function Task() {
       const editDataNew = { TaskStartTime: currentDateTime };
 
       try {
-        const urlTaskStatusStart = `https://localhost:44339/api/DeveloperTime/tasksStatusStart/${selectedTaskId}`;
+        const urlTaskStatusStart = `http://localhost:5228/api/DeveloperTime/tasksStatusStart/${selectedTaskId}`;
         const responseTaskStatusStart = await axios.put(urlTaskStatusStart, editDataNew);
         console.log('Start time submitted:', editDataNew);
       } catch (error) {
@@ -65,13 +65,13 @@ export default function Task() {
     try {
       const userid= getLoggedUserId();
       // DeveloperId == 5
-      const url = `https://localhost:44339/api/DeveloperTime/taskTimes/${selectedTaskId}/${userid}`;
+      const url = `http://localhost:5228/api/DeveloperTime/taskTimes/${selectedTaskId}/${userid}`;
       const response = await axios.post(url, editData);
 
-      const urlTask = `https://localhost:44339/api/DeveloperTime/tasks/${selectedTaskId}`;
+      const urlTask = `http://localhost:5228/api/DeveloperTime/tasks/${selectedTaskId}`;
       const responseTask = await axios.put(urlTask, editData);
 
-      const newProject = `https://localhost:44339/api/DeveloperTime/projects/${selectedTaskId}`;
+      const newProject = `http://localhost:5228/api/DeveloperTime/projects/${selectedTaskId}`;
       const responseProject = await axios.put(newProject, editData);
 
       console.log(editData);
@@ -89,7 +89,7 @@ export default function Task() {
     };
 
     try {
-      const urlTaskStatus = `https://localhost:44339/api/DeveloperTime/tasksStatusStop/${selectedTaskId}`;
+      const urlTaskStatus = `http://localhost:5228/api/DeveloperTime/tasksStatusStop/${selectedTaskId}`;
       const responseTaskStatus = await axios.put(urlTaskStatus, editData);
 
       console.log(editData);
@@ -105,7 +105,7 @@ export default function Task() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://localhost:44339/api/DeveloperTask/TaskDescription/${selectedTaskId}`);
+        const response = await fetch(`http://localhost:5228/api/DeveloperTask/TaskDescription/${selectedTaskId}`);
         const data = await response.json();
         setTaskData(data);
         console.log(data);

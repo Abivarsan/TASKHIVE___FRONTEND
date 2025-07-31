@@ -16,7 +16,7 @@ export default function TaskListCom() {
   const [list, setList] = useState([]);
 
   const GetList = async () => {
-    const url = `https://localhost:44339/api/TaskList?ProId=${ProId}&DevId=${DevId}`;
+    const url = `http://localhost:5228/api/TaskList?ProId=${ProId}&DevId=${DevId}`;
 
     try {
       const response = await axios.get(url);
@@ -40,7 +40,7 @@ export default function TaskListCom() {
       if (window.confirm("Do you want to remove the Developer?")) {
         try {
           const response = await axios.delete(
-            `https://localhost:44339/api/AddDevelopers/${ProId}/${DevId}`
+            `http://localhost:5228/api/AddDevelopers/${ProId}/${DevId}`
           );
           if (response.status === 200) {
             alert("Developer removed successfully");

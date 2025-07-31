@@ -65,7 +65,7 @@ const Budgetedit = (props) => {
     if (otherExpenses) editdata.OtherExpenses = otherExpenses;
     if (date) editdata.Date = date;
 
-    const url = `https://localhost:44339/api/Budget/Projects/${projectId}/register`;
+    const url = `http://localhost:5228/api/Budget/Projects/${projectId}/register`;
     axios.put(url, editdata)
       .then((result) => {
         alert("Data edited");

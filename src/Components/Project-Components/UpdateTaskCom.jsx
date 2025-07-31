@@ -37,7 +37,7 @@ export default function UpdateTaskCom() {
   useEffect(() => {
     if (taskId) {
       axios
-        .get(`https://localhost:44339/api/TaskCreation/${taskId}`)
+        .get(`http://localhost:5228/api/TaskCreation/${taskId}`)
         .then((response) => {
           const task = response.data;
           setTaskName(task.taskName);
@@ -88,7 +88,7 @@ export default function UpdateTaskCom() {
         DueDate: dueDate,
       };
 
-      const url = `https://localhost:44339/api/TaskCreation/${taskId ? taskId : ""}`;
+      const url = `http://localhost:5228/api/TaskCreation/${taskId ? taskId : ""}`;
 
       const request = taskId
         ? axios.put(url, data)

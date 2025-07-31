@@ -1,48 +1,72 @@
+/* COMPLETE PROPER CSS FOR SIDEBAR */
 
-  
-  .sidebar-item{
-    padding: .75em 1em;
-    display: block;
-    transition: background-color .15s;
-    border-radius: 5px;
-  }
-  .sidebar-item:hover{
-    background-color: rgba(255, 255, 255, .1);
-  }
-  
-  .sidebar-title{
-    display: flex;
-    font-size: 1.2em;
-    justify-content: space-between;
-  }
-  .sidebar-title span i{
-    display: inline-block;
-    width: 1.5em;
-  }
-  .sidebar-title .toggle-btn{
-    cursor: pointer;
-    transition: transform .3s;
-  }
-  .sidebar-item.open > .sidebar-title .toggle-btn{
-    transform: rotate(180deg);
-  }
-  .sidebar-content{
-    padding-top: .25em;
-    height: 0;
-    overflow: hidden;
-  }
-  .sidebar-item.open > .sidebar-content{
-    height: auto;
-  }
-  
-  .sidebar-item.plain{
-    color: #fff;
-    text-decoration: none;
-  }
-  .sidebar-item.plain:hover{
-    text-decoration: underline;
-  }
-  .sidebar-item.plain i{
-    display: inline-block;
-    width: 1.7em;
-  }
+.sidebar-item {
+  padding: .75em 1em;
+  display: block;
+  transition: background-color .15s;
+  border-radius: 5px;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(255, 255, 255, .1);
+}
+
+.sidebar-title {
+  display: flex;
+  font-size: 1.2em;
+  justify-content: space-between;
+  cursor: pointer; /* Make the entire title clickable */
+}
+
+.sidebar-title span i {
+  display: inline-block;
+  width: 1.5em;
+}
+
+.sidebar-title .toggle-btn {
+  cursor: pointer;
+  transition: transform .3s;
+}
+
+.sidebar-title .toggle-btn:before {
+  content: "▼"; /* Fallback arrow if Bootstrap Icons don't load */
+  font-size: 0.8em;
+}
+
+/* Hide the fallback arrow if Bootstrap Icons are loaded */
+.sidebar-title .toggle-btn.bi-chevron-down:before {
+  content: "";
+}
+
+.sidebar-item.open > .sidebar-title .toggle-btn {
+  transform: rotate(180deg);
+}
+
+/* Child menu container - starts hidden */
+.sidebar-content {
+  padding-top: .25em;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out; /* Smooth animation */
+}
+
+/* Show child menus when parent is open */
+.sidebar-item.open > .sidebar-content {
+  max-height: 300px; /* Adjust as needed for your menu height */
+}
+
+.sidebar-item.plain {
+  color: #fff;
+  text-decoration: none;
+  padding-left: 2em; /* Indent child items */
+}
+
+.sidebar-item.plain:hover {
+  text-decoration: underline;
+  background-color: rgba(255, 255, 255, .15);
+}
+
+.sidebar-item.plain i {
+  display: inline-block;
+  width: 1.7em;
+}

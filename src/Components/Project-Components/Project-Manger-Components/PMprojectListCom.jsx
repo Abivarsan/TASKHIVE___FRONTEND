@@ -11,7 +11,7 @@ export default function PMprojectListCom() {
 
   const navigate = useNavigate();
 
-  const url = `https://localhost:44339/api/PmProjectList?id=${ProjectManagerId}`; //new
+  const url = `http://localhost:5228/api/PmProjectList?id=${ProjectManagerId}`; //new
 
   useEffect(() => {
     axios

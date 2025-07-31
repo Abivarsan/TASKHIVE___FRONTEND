@@ -35,7 +35,7 @@ export default function AdminProjectView() {
 
     try {
       const response = await axios.get(
-        `https://localhost:44339/api/AdminProjectView/${selectedId}`
+        `http://localhost:5228/api/AdminProjectView/${selectedId}`
       );
       setProjectData(response.data);
       console.log(projectData);
@@ -48,7 +48,7 @@ export default function AdminProjectView() {
   const getAssignedDev = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:44339/api/GetAssignedDevelopers/${selectedId}`
+        `http://localhost:5228/api/GetAssignedDevelopers/${selectedId}`
       );
       setDevData(response.data);
       console.log(devData);
@@ -83,7 +83,7 @@ export default function AdminProjectView() {
   const [clientData, setClientData] = useState([]);
 
   const GetClientInfo = async () => {
-    const url = "https://localhost:44339/api/AdminGetClientInfo?CId=1";
+    const url = `http://localhost:5228/api/AdminGetClientInfo?CId=1`;
     try {
       const response = await axios.get(url);
       setClientData(response.data);
@@ -117,7 +117,7 @@ export default function AdminProjectView() {
     const formData = new FormData();
     formData.append("file", basicInfo);
 
-    const url1 = `https://localhost:44339/api/ProjectFileUpload/BasicInfo?ProID=${selectedId}`;
+    const url1 = `http://localhost:5228/api/ProjectFileUpload/BasicInfo?ProID=${selectedId}`;
 
     axios
       .post(url1, formData, {
@@ -140,7 +140,7 @@ export default function AdminProjectView() {
   const [basicNames, setBasicNames] = useState([]);
 
   const GetBasicFileNames = async () => {
-    const urlGetBasic = `https://localhost:44339/api/ProjectFileView/Basic?id=${selectedId}`;
+    const urlGetBasic = `http://localhost:5228/api/ProjectFileView/Basic?id=${selectedId}`;
 
     try {
       const response = await axios.get(urlGetBasic);
@@ -167,7 +167,7 @@ export default function AdminProjectView() {
     const formData = new FormData();
     formData.append("file", timeLineInfo);
 
-    const url2 = `https://localhost:44339/api/ProjectFileUpload/TimeLine?ProID=${selectedId}`;
+    const url2 = `http://localhost:5228/api/ProjectFileUpload/TimeLine?ProID=${selectedId}`;
 
     try {
       axios.post(url2, formData, {
@@ -188,7 +188,7 @@ export default function AdminProjectView() {
   const [timelineNames, setTimeLineNames] = useState([]);
 
   const GetTimeLineNames = async () => {
-    const urlGetTimeLine = `https://localhost:44339/api/ProjectFileView/TimeLine?id=${selectedId}`;
+    const urlGetTimeLine = `http://localhost:5228/api/ProjectFileView/TimeLine?id=${selectedId}`;
 
     try {
       const response = await axios.get(urlGetTimeLine);
@@ -215,7 +215,7 @@ export default function AdminProjectView() {
     const formData = new FormData();
     formData.append("file", budgetInfo);
 
-    const url3 = `https://localhost:44339/api/ProjectFileUpload/BudgetInfo?ProID=${selectedId}`;
+    const url3 = `http://localhost:5228/api/ProjectFileUpload/BudgetInfo?ProID=${selectedId}`;
 
     try {
       axios.post(url3, formData, {
@@ -236,7 +236,7 @@ export default function AdminProjectView() {
   const [budgetNames, setBudgetNames] = useState([]);
 
   const GetBudgetNames = async () => {
-    const urlGetBudget = `https://localhost:44339/api/ProjectFileView/BudgetInfo?id=${selectedId}`;
+    const urlGetBudget = `http://localhost:5228/api/ProjectFileView/BudgetInfo?id=${selectedId}`;
 
     try {
       const response = await axios.get(urlGetBudget);
@@ -265,7 +265,7 @@ export default function AdminProjectView() {
     const formData = new FormData();
     formData.append("file", clientInfo);
 
-    const url4 = `https://localhost:44339/api/ProjectFileUpload/ClientDoc?ProID=${selectedId}`;
+    const url4 = `http://localhost:5228/api/ProjectFileUpload/ClientDoc?ProID=${selectedId}`;
 
     try {
       axios.post(url4, formData, {
@@ -286,7 +286,7 @@ export default function AdminProjectView() {
   const [clientDocNames, setClientDocNames] = useState([]);
 
   const GetClientDocNames = async () => {
-    const urlGetClientDoc = `https://localhost:44339/api/ProjectFileView/ClientDoc?id=${selectedId}`;
+    const urlGetClientDoc = `http://localhost:5228/api/ProjectFileView/ClientDoc?id=${selectedId}`;
 
     try {
       const response = await axios.get(urlGetClientDoc);
@@ -300,7 +300,7 @@ export default function AdminProjectView() {
   //---------------------**********DOWNLOAD PROJECT FILES***********------------------------
 
   const download = async (filePath, fileName) => {
-    const urlDownload = `https://localhost:44339/api/ProjectFileDownload/DownloadProjectFile?FilePath=${filePath}&FileName=${fileName}`;
+    const urlDownload = `http://localhost:5228/api/ProjectFileDownload/DownloadProjectFile?FilePath=${filePath}&FileName=${fileName}`;
 
     try {
       // const response = await axios.get(url2);
@@ -332,7 +332,7 @@ export default function AdminProjectView() {
 
   const DeleteFile = async (id) => {
     if (window.confirm("Do you want to Delete item?")){
-    const url = `https://localhost:44339/api/TaskFileDelete/deleteFile?fileId=${id}`;
+    const url = `http://localhost:5228/api/TaskFileDelete/deleteFile?fileId=${id}`;
 
     try{
       await axios.delete(url);

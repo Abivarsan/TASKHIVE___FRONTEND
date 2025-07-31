@@ -49,7 +49,7 @@ export default function PopupForm() {
       CurrentRate: rate,
       UpdatedDate: selectedDate
     };
-    const url = 'https://localhost:44339/api/DeveloperRate/register';
+    const url = 'http://localhost:5228/api/DeveloperRate/register';
     axios.post(url, ratedata)
       .then((result) => {
         alert("Data inserted");
@@ -63,7 +63,7 @@ export default function PopupForm() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://localhost:44339/api/DeveloperRate/register');
+        const response = await axios.get('http://localhost:5228/api/DeveloperRate/register');
         setCurrentRate(response.data);  
         console.log(currentRate);
       } catch (error) {

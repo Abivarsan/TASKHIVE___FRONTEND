@@ -90,15 +90,15 @@ function DeveloperPayment() {
     }
     const userid = getLoggedUserId();
     try {
-      const rateResponse = await axios.get(`https://localhost:44339/api/Developer_Finance/Monthlyrate?month=${month}&year=${year}`);
+      const rateResponse = await axios.get(`http://localhost:5228/api/Developer_Finance/Monthlyrate?month=${month}&year=${year}`);
       setRate(rateResponse.data.currentRate);
 
-      const paymentResponse = await axios.get(`https://localhost:44339/api/Developer_Finance/Payment/${userid}/register?month=${month}&year=${year}`);
+      const paymentResponse = await axios.get(`http://localhost:5228/api/Developer_Finance/Payment/${userid}/register?month=${month}&year=${year}`);
       console.log(paymentResponse.data)
       setTotalWorkedHours(paymentResponse.data.monthlyWorkedHours);
       setTotalPayment(paymentResponse.data.totalMonthPayment);
     } catch (error) {
-      const url = `https://localhost:44339/api/Developer_Finance/Developer/${userid}/register?month=${month}&year=${year}`;
+      const url = `http://localhost:5228/api/Developer_Finance/Developer/${userid}/register?month=${month}&year=${year}`;
       try {
         await axios.post(url);
         handlePaymentRequest(); // Retry the payment request after the data is generated

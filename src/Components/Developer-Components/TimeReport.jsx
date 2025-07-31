@@ -22,11 +22,11 @@ function TimeReport() {
     
       const fetchDigramData = async (projectId) => {
         try {
-          const responseremain = await axios.get(`https://localhost:44339/api/TimeProgressReport/ProjectProgressReportRemain/${projectId}`);
+          const responseremain = await axios.get(`http://localhost:5228/api/TimeProgressReport/ProjectProgressReportRemain/${projectId}`);
           setRemain(responseremain.data);
           console.log(remain);
 
-          const responsecomplete = await axios.get(`https://localhost:44339/api/TimeProgressReport/ProjectProgressReportComplete/${projectId}`);
+          const responsecomplete = await axios.get(`http://localhost:5228/api/TimeProgressReport/ProjectProgressReportComplete/${projectId}`);
           setComplete(responsecomplete.data);
           console.log(complete);
           

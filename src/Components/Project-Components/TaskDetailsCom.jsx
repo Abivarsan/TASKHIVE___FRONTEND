@@ -28,7 +28,7 @@ export default function TaskDetailsCom() {
     const proId = location.state.ProId;
 
     const GetTaskDetails = async () => {
-        const url = `https://localhost:44339/api/TaskDetailsView?Tid=${selectedTaskId}`;
+        const url = `http://localhost:5228/api/TaskDetailsView?Tid=${selectedTaskId}`;
         try {
             const response = await axios.get(url);
             setData(response.data);
@@ -59,12 +59,11 @@ export default function TaskDetailsCom() {
       const formData = new FormData();
     formData.append("file", taskInfo);
 
-    const url1 = `https://localhost:44339/api/TaskInfoUpload/ZipUpload?ProID=${proId}&TId=${selectedTaskId}`;
+    const url1 = `http://localhost:5228/api/TaskInfoUpload/ZipUpload?ProID=${proId}&TId=${selectedTaskId}`;
 
-    
-      axios.post(url1, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
+    axios.post(url1, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
         },
       }).then(() => {
         alert("Upload Successful");
@@ -81,7 +80,7 @@ export default function TaskDetailsCom() {
   const [basicNames, setBasicNames] = useState([]);
 
   const GetBasicFileNames = async () => {
-    const urlGetBasic = `https://localhost:44339/api/TaskFilesView/TaskInfo?PId=${proId}&TId=${selectedTaskId}`;
+    const urlGetBasic = `http://localhost:5228/api/TaskFilesView/TaskInfo?PId=${proId}&TId=${selectedTaskId}`;
 
     try {
       const response = await axios.get(urlGetBasic);
@@ -113,12 +112,11 @@ export default function TaskDetailsCom() {
       const formData = new FormData();
     formData.append("file", img);
 
-    const url1 = `https://localhost:44339/api/TaskImageUpload/ImgUpload?ProID=${proId}&TId=${selectedTaskId}`;
+    const url1 = `http://localhost:5228/api/TaskImageUpload/ImgUpload?ProID=${proId}&TId=${selectedTaskId}`;
 
-    
-      axios.post(url1, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
+    axios.post(url1, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
         },
       }).then(() => {
         alert("Upload Successful");
@@ -136,7 +134,7 @@ export default function TaskDetailsCom() {
   const [imgNames, setImgNames] = useState([]);
 
   const GetImgNames = async () => {
-    const url = `https://localhost:44339/api/TaskFilesView/Images?PId=${proId}&TId=${selectedTaskId}`;
+    const url = `http://localhost:5228/api/TaskFilesView/Images?PId=${proId}&TId=${selectedTaskId}`;
 
     try {
       const response = await axios.get(url);
@@ -166,10 +164,9 @@ export default function TaskDetailsCom() {
     
           const formData = new FormData();
         formData.append("file", audio);
-    
-        const url1 = `https://localhost:44339/api/TaskAudioUpload/AudioUpload?ProID=${proId}&TId=${selectedTaskId}`;
-    
-        
+
+        const url1 = `http://localhost:5228/api/TaskAudioUpload/AudioUpload?ProID=${proId}&TId=${selectedTaskId}`;
+
           axios.post(url1, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
@@ -191,7 +188,7 @@ export default function TaskDetailsCom() {
   const [audioNames, setAudioNames] = useState([]);
 
   const GetAudioNames = async () => {
-    const url = `https://localhost:44339/api/TaskFilesView/audio?PId=${proId}&TId=${selectedTaskId}`;
+    const url = `http://localhost:5228/api/TaskFilesView/audio?PId=${proId}&TId=${selectedTaskId}`;
 
     try {
       const response = await axios.get(url);
@@ -276,10 +273,10 @@ export default function TaskDetailsCom() {
     
           const formData = new FormData();
         formData.append("file", zip);
-    
-        const url1 = `https://localhost:44339/api/TaskZipUpload/ZipUpload?ProID=${proId}&TId=${selectedTaskId}`;
-    
-        
+
+        const url1 = `http://localhost:5228/api/TaskZipUpload/ZipUpload?ProID=${proId}&TId=${selectedTaskId}`;
+
+
           axios.post(url1, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
@@ -299,7 +296,7 @@ export default function TaskDetailsCom() {
   const [zipNames, setZipNames] = useState([]);
 
   const GetZipNames = async () => {
-    const url = `https://localhost:44339/api/TaskFilesView/zip?PId=${proId}&TId=${selectedTaskId}`;
+    const url = `http://localhost:5228/api/TaskFilesView/zip?PId=${proId}&TId=${selectedTaskId}`;
 
     try {
       const response = await axios.get(url);
@@ -314,8 +311,8 @@ export default function TaskDetailsCom() {
   //----------------------Download Task Files ---------------------------******
 
   const download = async (filePath, fileName) => {
-    const urlDownload = `https://localhost:44339/api/ProjectFileDownload/DownloadProjectFile?FilePath=${filePath}&FileName=${fileName}`;
-    
+    const urlDownload = `http://localhost:5228/api/ProjectFileDownload/DownloadProjectFile?FilePath=${filePath}&FileName=${fileName}`;
+
 
     try {
       // const response = await axios.get(url2);
@@ -357,7 +354,7 @@ export default function TaskDetailsCom() {
 
   const DeleteFile = async (id) => {
     if (window.confirm("Do you want to Delete item?")){
-    const url = `https://localhost:44339/api/TaskFileDelete/deleteFile?fileId=${id}`;
+    const url = `http://localhost:5228/api/TaskFileDelete/deleteFile?fileId=${id}`;
 
     try{
       await axios.delete(url);
@@ -377,8 +374,8 @@ export default function TaskDetailsCom() {
 
   const DeleteTask = async () => {
     try{
-      const url = `https://localhost:44339/api/TaskDeletion?TId=${selectedTaskId}`;       
-      
+      const url = `http://localhost:5228/api/TaskDeletion?TId=${selectedTaskId}`;       
+
       if (window.confirm('Are you sure you want to delete the task?')) {
         const response = await axios.delete(url);
         if(response.status === 204){
@@ -402,7 +399,7 @@ export default function TaskDetailsCom() {
 
   const DeleteFiles = async () => {
   try{
-    const url2 = `https://localhost:44339/api/TaskFileDelete?id=${selectedTaskId}`;     // file delete related to task
+    const url2 = `http://localhost:5228/api/TaskFileDelete?id=${selectedTaskId}`;     // file delete related to task
 
     if (window.confirm('Are you sure you want to delete all uploaded files?')) {
       const deletedFile = await axios.delete(url2);
