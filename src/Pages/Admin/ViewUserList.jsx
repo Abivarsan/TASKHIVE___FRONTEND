@@ -14,12 +14,11 @@ function ViewUserList() {
     <Topbar/>
     
     <div className="Content">
-      
+      <div className="dashboard-content">
       <UserList/>
-   
+      </div>
     </div>
-    
-  </div>
+    </div>
   )
 }
 

@@ -1,101 +1,152 @@
+/* UserDetailView.css — Modern Material UI Profile Detail */
+
+/* Container */
 .profile-container {
   max-width: 800px;
-  margin: 0 auto;
-  padding: 40px;
-  position: relative;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-  text-align: center; 
+  margin: 40px auto;
+  padding: 32px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  animation: fadeInUp 0.6s ease-out;
 }
 
-.profile-details {
-  padding-top: 30px;
-  text-align: center;
-  margin-bottom: 20px;
-  color: black;
-  display: flex;
-  padding-bottom: 10px;
-}
-
-.profile-container img.card-img-top.rounded-circle {
-  width: 200px; 
-  height: 200px; 
-  object-fit: cover; 
-  border: 2px solid #ddd; 
-  padding: 5px; 
-  border-radius: 50%; 
-}
-
-.bottom-buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-}
-
-.bottom-buttons .btn {
-  margin: 0 10px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  color: white;
-  cursor: pointer;
-}
-
-.bottom-buttons .btn:hover {
-  opacity: 0.9;
-}
-
-.bottom-buttons .btn.back {
-  background-color: #6c757d; /* Ash color */
-}
-
-.bottom-buttons .btn.deactivate,
-.bottom-buttons .btn.update-role {
-  background-color: #007bff; /* Blue color */
-}
-
-.bottom-buttons .btn.reactivate {
-  background-color: #dc3545; /* Red color */
-}
-
-.user-details-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 0 auto;
-}
-
-.user-details-table .label {
-  text-align: right;
-  padding: 6px 15px;
-  font-weight: bold;
-  
-  margin-top: 100px;
-}
-
-.user-details-table .value {
-  text-align: left;
-  padding: 8px 15px;
-}
-
-.user-details-table td {
-  border: none;
-}
-
-.image-preview {
+/* Header */
+.profile-header {
   display: flex;
   align-items: center;
-  gap: 10px; /* Adjust the gap between image and text */
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 32px;
 }
 
-.profile-image {
-  max-width: 100px; /* Adjust image width */
-  max-height: 100px; /* Adjust image height */
-  border-radius: 5px;
+/* Profile image */
+.profile-header .profile-image,
+.profile-header .profile-image-placeholder {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #1976d2;
+  transition: transform 0.3s ease;
+}
+.profile-header .profile-image:hover,
+.profile-header .profile-image-placeholder:hover {
+  transform: scale(1.05);
 }
 
-.image-name {
-  font-size: 12px; /* Adjust font size */
-  margin: 0; /* Remove default margin */
+/* Name and status */
+.profile-info {
+  text-align: center;
+}
+.profile-info h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1976d2;
+  margin-bottom: 8px;
+}
+.profile-info .status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  background: #e3f2fd;
+  color: #1976d2;
+  text-transform: uppercase;
+}
+
+/* Details table */
+.user-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 24px;
+}
+.user-details-table td {
+  padding: 12px 16px;
+  vertical-align: top;
+}
+.user-details-table .label {
+  width: 35%;
+  font-weight: 600;
+  color: #424242;
+  text-align: right;
+}
+.user-details-table .value {
+  width: 65%;
+  color: #333;
+  text-align: left;
+}
+
+/* Action buttons */
+.bottom-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 32px;
+}
+.bottom-buttons .btn {
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.bottom-buttons .btn.back {
+  background: #757575;
+  color: white;
+}
+.bottom-buttons .btn.back:hover {
+  background: #616161;
+  transform: translateY(-2px);
+}
+.bottom-buttons .btn.update-role,
+.bottom-buttons .btn.deactivate {
+  background: #1976d2;
+  color: white;
+}
+.bottom-buttons .btn.update-role:hover,
+.bottom-buttons .btn.deactivate:hover {
+  background: #1565c0;
+  transform: translateY(-2px);
+}
+.bottom-buttons .btn.reactivate {
+  background: #4caf50;
+  color: white;
+}
+.bottom-buttons .btn.reactivate:hover {
+  background: #388e3c;
+  transform: translateY(-2px);
+}
+
+/* Modal override */
+.modal-content {
+  border-radius: 12px;
+  overflow: hidden;
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* Utility animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-header { flex-direction: column; gap: 16px; }
+  .profile-header .profile-image { width: 120px; height: 120px; }
+  .profile-info h2 { font-size: 20px; }
+  .user-details-table .label,
+  .user-details-table .value { display: block; width: 100%; text-align: left; }
+  .user-details-table .label { margin-top: 16px; text-align: left; }
+}
+@media (max-width: 480px) {
+  .profile-container { padding: 24px 16px; }
+  .profile-header .profile-image { width: 100px; height: 100px; }
+  .bottom-buttons .btn { flex: 1 1 100%; text-align: center; }
 }

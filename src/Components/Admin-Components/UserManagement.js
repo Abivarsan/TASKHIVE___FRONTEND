@@ -1,8 +1,10 @@
+// UserManagement.js
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
-import SearchBar from "../Common-Components/Searchbar.jsx"; 
-import apiRequest from '../../Auth/ApiService.js'; 
-import './styles/UserList.css'
+import { useNavigate } from "react-router-dom";
+import SearchBar from "../Common-Components/Searchbar.jsx";
+import LogoutButton from "../Common-Components/Logout.jsx";
+import apiRequest from "../../Auth/ApiService.js";
+import "./styles/UserMangement.css";
 
 export default function UserManagement() {
   const [data, setData] = useState([]);
@@ -10,7 +12,7 @@ export default function UserManagement() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchData(); // Fetch data on component mount
+    fetchData();
   }, []);
 
   const fetchData = async () => {
@@ -24,20 +26,14 @@ export default function UserManagement() {
     }
   };
 
-  const handleUserSelection = (id) => {
-    navigate(`/userProfilePage/${id}`); // Pass the selected user's ID as part of the URL
-  };
-
-  const handleAddUser = () => {
-    navigate('/userCreation');
-  };
-
   const handleSearch = async (searchTerm) => {
-    if (searchTerm.trim() === "") {
-      fetchData(); // If search term is empty, fetch all data
+    if (!searchTerm.trim()) {
+      fetchData();
     } else {
       try {
-        const result = await apiRequest(`http://localhost:5228/api/User/search?term=${searchTerm}`);
+        const result = await apiRequest(
+          `http://localhost:5228/api/User/search?term=${encodeURIComponent(searchTerm)}`
+        );
         setData(result);
       } catch (error) {
         console.error("Error searching data:", error);
@@ -45,58 +41,91 @@ export default function UserManagement() {
     }
   };
 
+  const handleAddUser = () => {
+    navigate("/userCreation");
+  };
+
+  const handleUserClick = (id) => {
+    navigate(`/userProfilePage/${id}`);
+  };
+
   if (loading) {
-    return (
-      <div className="container mt-5">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
+    return <div className="user-management-container">Loading...</div>;
   }
 
   return (
-    <div className="container mt-5">
-      <div className="d-flex justify-content-between mb-3">
-        <h2>User List</h2>
-        <button 
-          style={{ backgroundColor: '#2d4296', borderColor: 'black' }} 
-          className="btn btn-primary" 
-          onClick={handleAddUser}
-        >
-          + Add New User
+    <div className="user-management-container">
+      <div className="controls-row">
+        <div className="search-wrapper">
+          <SearchBar onSearch={handleSearch} />
+        </div>
+        <button className="add-user-btn" onClick={handleAddUser}>
+          Add New User
         </button>
       </div>
-      
-      <SearchBar onSearch={handleSearch} />
 
-      <table className="table table-striped mt-3">
-        <thead className="thead-dark">
-        <tr>
-            <th></th>
-            <th>User Id</th>
-            <th>User Name</th>
-            <th>First Name</th>
-            <th>Email</th>
-            <th>User Category</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((user, index) => (
-            <tr key={index} className={user.isActive ? "" : "table-danger"} onClick={() => handleUserSelection(user.userId)}>
-               <td>{user.imageSrc && (
-                    <img src={user.imageSrc} alt="Profile" className="profile-dropdown-photo1" />
-                  )}
-              </td>
-              <td>{user.userId}</td>
-              <td>{user.userName}</td>
-              <td>{user.firstName}</td>
-              <td>{user.email}</td>
-              <td>{user.userCategoryType}</td> 
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {data.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-state-icon">👥</div>
+          <div className="empty-state-title">No Users Found</div>
+          <div className="empty-state-message">
+            Try adding a new user or adjust your search.
+          </div>
+          <button className="add-user-btn" onClick={handleAddUser}>
+            Add First User
+          </button>
+        </div>
+      ) : (
+        <div className="table-container">
+          <table className="UserList">
+            <thead>
+              <tr>
+                <th>Photo</th>
+                <th>User ID</th>
+                <th>User Name</th>
+                <th>First Name</th>
+                <th>Email</th>
+                <th>Category</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((user) => (
+                <tr
+                  key={user.userId}
+                  onClick={() => handleUserClick(user.userId)}
+                >
+                  <td className="profile-photo-cell">
+                    {user.profileImageUrl ? (
+                      <img
+                        src={user.profileImageUrl}
+                        alt="avatar"
+                        className="profile-photo"
+                      />
+                    ) : (
+                      <div className="profile-photo-placeholder">
+                        {user.firstName?.[0]?.toUpperCase() || "U"}
+                      </div>
+                    )}
+                  </td>
+                  <td>#{user.userId}</td>
+                  <td>{user.userName || "N/A"}</td>
+                  <td>{user.firstName || "N/A"}</td>
+                  <td>{user.email || "N/A"}</td>
+                  <td>
+                    <span
+                      className={`category-badge ${
+                        user.userCategoryType?.toLowerCase() || "user"
+                      }`}
+                    >
+                      {user.userCategoryType}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

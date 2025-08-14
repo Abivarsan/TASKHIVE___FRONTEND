@@ -5,27 +5,25 @@ import '../Styles/PageStructure.css'
 import AdminDashboardComponent from '../../Components/Admin-Components/AdminDashboardComponent.js'
 import { useLocation } from 'react-router-dom'
 
-
 function AdminDashboard() {
-
-
-
-
-
   return (
     <div className="FullPage">
+      {/* Sidebar */}
+      <Sidebar />
       
-      <Sidebar/>
-      <Topbar/>
-     
+      {/* Topbar */}
+      <Topbar />
+      
+      {/* Main Content Area */}
       <div className="Content">
        
-        <AdminDashboardComponent showRateUpdate={true}/>
-     
+        
+        {/* Dashboard Component */}
+        <div className="dashboard-content">
+          <AdminDashboardComponent showRateUpdate={true} />
+        </div>
       </div>
-      
     </div>
-
   )
 }
 

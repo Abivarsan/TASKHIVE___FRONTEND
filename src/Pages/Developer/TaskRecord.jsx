@@ -19,7 +19,7 @@ export default function TaskRecord() {
       <DeveloperSidebar/>
 
       <div className="Content">
-      <TaskHeader/>
+      
       <Task/>
    
         </div>

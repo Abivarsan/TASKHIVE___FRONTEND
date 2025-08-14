@@ -12,8 +12,6 @@ export default function ProjectDescription() {
   const selectedId = location.state?.selectedId;
   const navigate = useNavigate();
 
-  console.log("Selected ID:", selectedId);
-
   const getData = async () => {
     if (!selectedId) {
       setError('No project ID provided');
@@ -121,10 +119,10 @@ export default function ProjectDescription() {
                 <span className="basic-info-icon">🚀</span>
                 <h2 className="basic-info-title">Project Overview</h2>
               </div>
-
+              
               <h3 className="project-name">{projectDetails[0].projectName}</h3>
               <span className="project-id">ID: {projectDetails[0].projectId}</span>
-              
+
               <div className="detail-item">
                 <span className="detail-label">Description</span>
                 <p className="detail-value">

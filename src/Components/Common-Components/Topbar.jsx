@@ -12,13 +12,13 @@ export default function Topbar() {
   return (
     <div className="topbar">
       <div className="appname">
-        Project Manager
+        TASKHIVE
       </div>
       
       <div className="topbar-items">
-        <div className="search-container">
+        {/* <div className="search-container">
           <SearchBar onSearch={handleSearch} />
-        </div>
+        </div> */}
         
         <div className="profile-section">
           <Profile />

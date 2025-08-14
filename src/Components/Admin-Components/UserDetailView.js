@@ -1,3 +1,4 @@
+// UserDetailView.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
@@ -90,89 +91,132 @@ const UserDetailView = () => {
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
+  const getInitials = (firstName, lastName) => {
+    return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'U';
+  };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="profile-container">
+        <div className="loading-state">Loading user details...</div>
+      </div>
+    );
   }
 
   if (!userData) {
-    return <div>{errorMessage || 'User data not found.'}</div>;
+    return (
+      <div className="profile-container">
+        <div className="error-state">User not found or error loading data.</div>
+      </div>
+    );
   }
 
   return (
     <div className="profile-container">
-      <div>
-        {userData.imageSrc && (
-          <img src={userData.imageSrc} alt="Profile" className="card-img-top rounded-circle" />
+      {/* Header Section */}
+      <div className="profile-header">
+        {userData.imageSrc ? (
+          <img
+            src={userData.imageSrc}
+            alt="Profile"
+            className="profile-image"
+          />
+        ) : (
+          <div className="profile-image-placeholder">
+            {getInitials(userData.firstName, userData.lastName)}
+          </div>
         )}
+        
+        <div className="profile-info">
+          <h2>{userData.firstName} {userData.lastName}</h2>
+          <span className={`status-badge ${isActive ? 'active' : 'inactive'}`}>
+            {isActive ? 'Active' : 'Inactive'}
+          </span>
+        </div>
       </div>
-      <div className="profile-details">
-        <table className="user-details-table">
-          <tbody>
-            <tr>
-              <td className="label"><strong>User ID:</strong></td>
-              <td className="value">{userData.userId}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Username:</strong></td>
-              <td className="value">{userData.userName}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Name:</strong></td>
-              <td className="value">{userData.firstName} {userData.lastName}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Email:</strong></td>
-              <td className="value">{userData.email}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Mobile number:</strong></td>
-              <td className="value">{userData.contactNumber}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Address:</strong></td>
-              <td className="value">{userData.address}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Gender:</strong></td>
-              <td className="value">{userData.gender}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>NIC:</strong></td>
-              <td className="value">{userData.nic}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>DOB:</strong></td>
-              <td className="value">{userData.dob}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>User Category:</strong></td>
-              <td className="value">{userData.userCategoryType}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Job Role:</strong></td>
-              <td className="value">{userData.jobRoleType}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+
+      {/* Details Table */}
+      <table className="user-details-table">
+        <tbody>
+          <tr>
+            <td className="label">User ID:</td>
+            <td className="value">#{userData.userId}</td>
+          </tr>
+          <tr>
+            <td className="label">Username:</td>
+            <td className="value">{userData.userName || 'N/A'}</td>
+          </tr>
+          <tr>
+            <td className="label">Name:</td>
+            <td className="value">{userData.firstName} {userData.lastName}</td>
+          </tr>
+          <tr>
+            <td className="label">Email:</td>
+            <td className="value">{userData.email || 'N/A'}</td>
+          </tr>
+          <tr>
+            <td className="label">Mobile Number:</td>
+            <td className="value">{userData.contactNumber || 'N/A'}</td>
+          </tr>
+          <tr>
+            <td className="label">Address:</td>
+            <td className="value">{userData.address || 'N/A'}</td>
+          </tr>
+          <tr>
+            <td className="label">Gender:</td>
+            <td className="value">{userData.gender || 'N/A'}</td>
+          </tr>
+          <tr>
+            <td className="label">NIC:</td>
+            <td className="value">{userData.nic || 'N/A'}</td>
+          </tr>
+          <tr>
+            <td className="label">Date of Birth:</td>
+            <td className="value">
+              {userData.dob ? new Date(userData.dob).toLocaleDateString() : 'N/A'}
+            </td>
+          </tr>
+          <tr>
+            <td className="label">User Category:</td>
+            <td className="value">{userData.userCategoryType || 'N/A'}</td>
+          </tr>
+          <tr>
+            <td className="label">Job Role:</td>
+            <td className="value">{userData.jobRoleType || 'N/A'}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {/* Action Buttons */}
       <div className="bottom-buttons">
-        <Link to="/userManagement" className="btn btn-secondary">Back</Link>
-        {isActive && loggedInUserId !== userId && (
-          <button className="btn btn-danger" onClick={deactivateUser}>Deactivate</button>
-        )}
-        {!isActive && (
-          <button className="btn btn-danger" onClick={reactivateUser}>Reactivate</button>
-        )}
-        {isActive && userData.userCategoryType !== "ADMIN" && (
-          <button
-            className="btn btn-primary"
-            onClick={handleShowModal}
-          >
-            Update Role
-          </button>
+        <Link to="/userManagement">
+          <button className="btn back">Back to List</button>
+        </Link>
+        
+        {loggedInUserId && parseInt(loggedInUserId) !== parseInt(userId) && (
+          <>
+            <button className="btn update-role" onClick={handleShowModal}>
+              Update Role
+            </button>
+            
+            {isActive ? (
+              <button className="btn deactivate" onClick={deactivateUser}>
+                Deactivate User
+              </button>
+            ) : (
+              <button className="btn reactivate" onClick={reactivateUser}>
+                Reactivate User
+              </button>
+            )}
+          </>
         )}
       </div>
+
+      {/* Modal for Role Update */}
       <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Update User Role</Modal.Title>
+        </Modal.Header>
         <Modal.Body>
           <UpdateUserRoleComponent
             userId={userId}
@@ -181,6 +225,13 @@ const UserDetailView = () => {
           />
         </Modal.Body>
       </Modal>
+
+      {/* Error Message Display */}
+      {errorMessage && (
+        <div className="error-message">
+          {errorMessage}
+        </div>
+      )}
     </div>
   );
 };

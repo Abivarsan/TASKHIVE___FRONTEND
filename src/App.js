@@ -74,13 +74,9 @@ function App() {
               <Route path="/userCreation" element={<UserCreation/>}/>
               <Route path="/budget" element ={<Budgetplan/>}/>
               <Route path="/transaction" element ={<TransactionPage/>}/>
-             
-
-
               <Route path="/clientCreation" element={<ClientCreation/>}/>
               <Route path="/clientList" element={<ViewClientList/>}/>
               <Route path="/clientProfilePage/:clientId" element={<ViewClientDetail/>}/>
-
               <Route path="/userManagement" element={<UserManagement/>} />
               <Route path="/userProfilePage/:userId" element={<ViewUserDetail />} />
 
@@ -106,17 +102,19 @@ function App() {
     
         <Route path="/projectcreation" element ={<ProjectCreation/>}></Route>
         <Route path="/projectlist" element ={<ProjectList/>}></Route>
+        <Route path="/AdminProjectViewPage" element={<AdminProjectViewPage/>}></Route>
+        
         <Route path="/taskcreation" element ={<TaskCreation/>}></Route>
         {/* <Route path="/clientlist" element ={<ClientList/>}></Route>
         <Route path="/payments" element ={<Payments/>}></Route>
         <Route path="/sendemail" element ={<SendEmail/>}></Route>*/}
  
  
-        <Route path="/AdminProjectViewPage" element={<AdminProjectViewPage/>}></Route>
+       
         <Route path="/AddDevelopersPage" element={<AddDevelopersPage/>}></Route>
         <Route path="/AddDevelopersPage" element={<AddDevelopersPage/>}></Route>
         <Route path="/AdminProjectViewPage" element={<AdminProjectViewPage/>}></Route>
- 
+         <Route path="/updateProjectPage" element={<UpdateProjectPage/>}></Route>
 
         <Route path="/loginform" element={<LoginForm/>}></Route>
         <Route path="/resetpassword" element={<ResetPassword/>}></Route>         
@@ -125,17 +123,27 @@ function App() {
         {/* <Route path="/budgetestform"  element={<BudgetEstimationForm/>}></Route> */}
 
        {/* newly added routes  */}
-        <Route path="/DeveloperDashboard" element={<DashboardDeveloper/>}></Route>
-        <Route path="/DeveloperProject" element={<ProjectDeveloper/>}></Route>
-        <Route path="/DeveloperTask" element={<TaskDeveloper/>}></Route>
-        <Route path="/DeveloperProgress" element={<ProgressDeveloper/>}></Route>
-        <Route path="/ProjectDescriptionDeveloper" element={<ProjectDescriptionDeveloper/>}></Route>
-        <Route path="/TaskDescriptionDeveloper" element={<TaskDescriptionDeveloper/>}></Route>
-        <Route path="/TaskRecord" element={<TaskRecord/>}></Route>
-        <Route path="/ProjectReport" element={<ProjectReport/>}></Route>
-        <Route path="/ProjectModuleReport" element={<ProjectModuleReport/>}></Route>
-        <Route path="/TeamDescriptionDeveloper" element={<TeamDescriptionDeveloper/>}></Route>
-        <Route path="/ProjectFileViewPage" element={<ProjectFileViewPage/>}></Route>
+         {/* Developer  */}
+            <Route path="/DeveloperDashboard" element={<DashboardDeveloper/>}></Route>
+            <Route path="/TeamDescriptionDeveloper" element={<TeamDescriptionDeveloper/>}></Route>
+
+            <Route path="/DeveloperProject" element={<ProjectDeveloper/>}></Route>
+            <Route path="/ProjectDescriptionDeveloper" element={<ProjectDescriptionDeveloper/>}></Route>
+            <Route path="/ProjectFileViewPage" element={<ProjectFileViewPage/>}></Route>
+            <Route path="/ProjectReport" element={<ProjectReport/>}></Route>
+             <Route path="/ProjectModuleReport" element={<ProjectModuleReport/>}></Route>
+
+            <Route path="/DeveloperTask" element={<TaskDeveloper/>}></Route>
+            <Route path="/TaskDescriptionDeveloper" element={<TaskDescriptionDeveloper/>}></Route>
+            <Route path="/TaskRecord" element={<TaskRecord/>}></Route>
+            <Route path="/DeveloperProgress" element={<ProgressDeveloper/>}></Route>
+        
+       
+           
+       
+       
+       
+     
         <Route path="/PMprojectListPage" element={<PMprojectListPage/>}></Route>
         <Route path="/PMprojectDetailsPage" element={<PMprojectDetailsPage/>}></Route>
         <Route path="/PMtaskCreationPage" element={<PMtaskCreationPage/>}></Route>
@@ -145,7 +153,7 @@ function App() {
         <Route path="/taskList" element={<TaskList/>}></Route>
         <Route path="/fullTaskListPage" element = {<FullTaskListPage/>}></Route>
         <Route path="/pMFullTaskListPage" element = {<PMFullTaskViewPage/>}></Route>
-          <Route path="/updateProjectPage" element={<UpdateProjectPage/>}></Route>
+         
           <Route path="/updateTaskPage" element={<UpdateTaskPage/>}></Route>
           <Route path="/budgetcreation" element={<BudgetEditPage/>}></Route>
 

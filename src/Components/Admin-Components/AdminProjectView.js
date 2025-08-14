@@ -1,327 +1,194 @@
+// AdminProjectView.js
 import React, { useEffect, useState } from "react";
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
-import "../Project-Components/Styles/FormStyle.css";
-//import "./AdminProjectViewCSS.css";
 import axios from "axios";
-import "../Project-Components/ProjectListComponent";
 import { useLocation, useNavigate } from "react-router-dom";
-import Button from "react-bootstrap/Button";
-import "../Project-Components/Styles/DataView.css";
-
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
-
-import "../Project-Components/Styles/ProjectListCSS.css";
-
-import DeleteIcon from '@mui/icons-material/Delete';
-
+import "./styles/AdminProjectViewCSS.css";
 
 export default function AdminProjectView() {
   const [projectData, setProjectData] = useState([]);
-  const location = useLocation();
-
   const [devData, setDevData] = useState([]);
+  const [clientData, setClientData] = useState([]);
+  const [activeTab, setActiveTab] = useState(0);
+  const [loading, setLoading] = useState(true);
+  
+  // File upload states
+  const [basicInfo, setBasicInfo] = useState("");
+  const [budgetInfo, setBudgetInfo] = useState("");
+  const [timeLineInfo, setTimeLineInfo] = useState("");
+  const [clientInfo, setClientInfo] = useState("");
+  
+  // File names states
+  const [basicNames, setBasicNames] = useState([]);
+  const [budgetNames, setBudgetNames] = useState([]);
+  const [timelineNames, setTimeLineNames] = useState([]);
+  const [clientDocNames, setClientDocNames] = useState([]);
 
-  //  console.log(location.state.selectedId);
-  const selectedId = location.state.selectedId;
-
+  const location = useLocation();
   const navigate = useNavigate();
+  const selectedId = location.state?.selectedId;
 
-  //---------get project data in project info
-
+  // Get project data
   const getData = async () => {
-    //    const url = `https://localhost:44319/api/AdminProjectView/${selectedId}`;    //old
-
     try {
       const response = await axios.get(
         `http://localhost:5228/api/AdminProjectView/${selectedId}`
       );
       setProjectData(response.data);
-      console.log(projectData);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching project data:", error);
     }
   };
 
-  //-----------get assigned developer list in team info
+  // Get assigned developers
   const getAssignedDev = async () => {
     try {
       const response = await axios.get(
         `http://localhost:5228/api/GetAssignedDevelopers/${selectedId}`
       );
       setDevData(response.data);
-      console.log(devData);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching developers:", error);
     }
   };
 
-  const handleNavigate = async () => {
-    console.log("clicked");
-    navigate("/AddDevelopersPage", { state: { selectedId: selectedId } });
-  };
-
-  const HandleAssign = (id) => {
-    var selectedDevId = id;
-    //console.log("clicked " + selectedDevId + " " + selectedId);
-    navigate("/taskcreation", { state: { selectedDevId, selectedId } });
-  };
-
-  const HandleTaskListButton = (id) => {
-    var selectedDevId = id;
-    console.log("clicked " + selectedDevId + " " + selectedId);
-    navigate("/TaskList", { state: { selectedDevId, selectedId } });
-  };
-
-  const FullTaskList = () => {
-    navigate("/FullTaskListPage", { state: { selectedId } });
-  };
-
-  //--------------------------************** Client Info --------------*******************///////////////
-
-  const [clientData, setClientData] = useState([]);
-
+  // Get client info
   const GetClientInfo = async () => {
-    const url = `http://localhost:5228/api/AdminGetClientInfo?CId=1`;
     try {
-      const response = await axios.get(url);
+      const response = await axios.get(`http://localhost:5228/api/AdminGetClientInfo?CId=1`);
       setClientData(response.data);
-      console.log("**");
-      console.log(clientData);
     } catch (error) {
-      alert(error);
+      console.error("Error fetching client info:", error);
     }
   };
 
-  //--------------------------------***********************   FILE UPLOAD PART  *************************-------------------
-
-  const [basicInfo, setBasicInfo] = useState("");
-  const [budgetInfo, setBudgetInfo] = useState("");
-  const [timeLineInfo, setTimeLineInfo] = useState("");
-  const [clientInfo, setClientInfo] = useState("");
-
-  //------------basic info
-
-  const handleBasicInfoChange = (event) => {
-    setBasicInfo(event.target.files[0]);
-    console.log("basic info selected");
-  };
-
-  const handleBasicInfoUpload = async () => {
-    if (!basicInfo) {
-      alert("select a file");
+  // File upload handlers
+  const handleFileUpload = async (file, category) => {
+    if (!file) {
+      alert("Please select a file");
       return;
     }
 
     const formData = new FormData();
-    formData.append("file", basicInfo);
+    formData.append("file", file);
+    
+    const urls = {
+      basic: `http://localhost:5228/api/ProjectFileUpload/BasicInfo?ProID=${selectedId}`,
+      timeline: `http://localhost:5228/api/ProjectFileUpload/TimeLine?ProID=${selectedId}`,
+      budget: `http://localhost:5228/api/ProjectFileUpload/BudgetInfo?ProID=${selectedId}`,
+      client: `http://localhost:5228/api/ProjectFileUpload/ClientDoc?ProID=${selectedId}`
+    };
 
-    const url1 = `http://localhost:5228/api/ProjectFileUpload/BasicInfo?ProID=${selectedId}`;
-
-    axios
-      .post(url1, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then(() => {
-        alert("Upload Successful");
-
-        setBasicInfo(null);
-      })
-      .catch((error) => {
-        console.error("Error uploading file:", error);
+    try {
+      await axios.post(urls[category], formData, {
+        headers: { "Content-Type": "multipart/form-data" }
       });
+      alert("File uploaded successfully!");
+      
+      // Reset file state and reload file names
+      switch(category) {
+        case 'basic': setBasicInfo(""); GetBasicFileNames(); break;
+        case 'timeline': setTimeLineInfo(""); GetTimeLineNames(); break;
+        case 'budget': setBudgetInfo(""); GetBudgetNames(); break;
+        case 'client': setClientInfo(""); GetClientDocNames(); break;
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+      alert("Upload failed. Please try again.");
+    }
   };
 
-  //------view basic info
-
-  const [basicNames, setBasicNames] = useState([]);
-
+  // Get file names functions
   const GetBasicFileNames = async () => {
-    const urlGetBasic = `http://localhost:5228/api/ProjectFileView/Basic?id=${selectedId}`;
-
     try {
-      const response = await axios.get(urlGetBasic);
+      const response = await axios.get(`http://localhost:5228/api/ProjectFileView/Basic?id=${selectedId}`);
       setBasicNames(response.data);
-      console.log(response.data);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching basic files:", error);
     }
   };
-
-  //------------timeline
-
-  const handleTimeLineInfoChange = (event) => {
-    setTimeLineInfo(event.target.files[0]);
-    console.log("Timeline selected");
-  };
-
-  const handleTimeLineInfoUpload = async () => {
-    if (!timeLineInfo) {
-      alert("select a file");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", timeLineInfo);
-
-    const url2 = `http://localhost:5228/api/ProjectFileUpload/TimeLine?ProID=${selectedId}`;
-
-    try {
-      axios.post(url2, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      alert("Upload Successful");
-      setTimeLineInfo(null);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    }
-  };
-
-  //--view timeline info
-
-  const [timelineNames, setTimeLineNames] = useState([]);
 
   const GetTimeLineNames = async () => {
-    const urlGetTimeLine = `http://localhost:5228/api/ProjectFileView/TimeLine?id=${selectedId}`;
-
     try {
-      const response = await axios.get(urlGetTimeLine);
+      const response = await axios.get(`http://localhost:5228/api/ProjectFileView/TimeLine?id=${selectedId}`);
       setTimeLineNames(response.data);
-      console.log(response.data);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching timeline files:", error);
     }
   };
-
-  //-----------budget
-
-  const handleBudgetInfoChange = (event) => {
-    setBudgetInfo(event.target.files[0]);
-    console.log("Budget info selected");
-  };
-
-  const handleBudgetInfoUpload = async () => {
-    if (!budgetInfo) {
-      alert("select a file");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", budgetInfo);
-
-    const url3 = `http://localhost:5228/api/ProjectFileUpload/BudgetInfo?ProID=${selectedId}`;
-
-    try {
-      axios.post(url3, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      alert("Upload Successful");
-      setBudgetInfo(null);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    }
-  };
-
-  //--view budget info
-
-  const [budgetNames, setBudgetNames] = useState([]);
 
   const GetBudgetNames = async () => {
-    const urlGetBudget = `http://localhost:5228/api/ProjectFileView/BudgetInfo?id=${selectedId}`;
-
     try {
-      const response = await axios.get(urlGetBudget);
+      const response = await axios.get(`http://localhost:5228/api/ProjectFileView/BudgetInfo?id=${selectedId}`);
       setBudgetNames(response.data);
-      console.log(response.data);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching budget files:", error);
     }
   };
-
-  //-----------client
-
-  const handleClientInfoChange = (event) => {
-    setClientInfo(event.target.files[0]);
-    console.log("Client info selected");
-  };
-
-  const handleClientInfoUpload = async () => {
-    if (!clientInfo) {
-      alert("select a file");
-      return;
-    }
-
-    console.log(clientInfo);
-
-    const formData = new FormData();
-    formData.append("file", clientInfo);
-
-    const url4 = `http://localhost:5228/api/ProjectFileUpload/ClientDoc?ProID=${selectedId}`;
-
-    try {
-      axios.post(url4, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      alert("Upload Successful");
-      setClientInfo(null);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    }
-  };
-
-  //--view ClientDocument info
-
-  const [clientDocNames, setClientDocNames] = useState([]);
 
   const GetClientDocNames = async () => {
-    const urlGetClientDoc = `http://localhost:5228/api/ProjectFileView/ClientDoc?id=${selectedId}`;
-
     try {
-      const response = await axios.get(urlGetClientDoc);
+      const response = await axios.get(`http://localhost:5228/api/ProjectFileView/ClientDoc?id=${selectedId}`);
       setClientDocNames(response.data);
-      console.log(response.data);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching client docs:", error);
     }
   };
 
-  //---------------------**********DOWNLOAD PROJECT FILES***********------------------------
-
+  // Download file
   const download = async (filePath, fileName) => {
-    const urlDownload = `http://localhost:5228/api/ProjectFileDownload/DownloadProjectFile?FilePath=${filePath}&FileName=${fileName}`;
-
-    try {
-      // const response = await axios.get(url2);
-      // console.log(response)
-      if (window.confirm("Do you want to download this item?")) {
-        const response = await axios.get(urlDownload, {
-          responseType: "blob", // Specify blob response type for downloading
-        });
-        console.log("downloaded");
+    if (window.confirm("Do you want to download this file?")) {
+      try {
+        const response = await axios.get(
+          `http://localhost:5228/api/ProjectFileDownload/DownloadProjectFile?FilePath=${filePath}&FileName=${fileName}`,
+          { responseType: "blob" }
+        );
+        
         const blob = new Blob([response.data], { type: response.data.type });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = fileName;
         link.click();
-        alert("Downloaded");
-      } else {
-        console.log("Not downloaded");
+        alert("Download completed!");
+      } catch (error) {
+        console.error("Download failed:", error);
+        alert("Download failed. Please try again.");
       }
-    } catch (error) {
-      console.log(error);
     }
+  };
+
+  // Delete file
+  const DeleteFile = async (id) => {
+    if (window.confirm("Are you sure you want to delete this file?")) {
+      try {
+        await axios.delete(`http://localhost:5228/api/TaskFileDelete/deleteFile?fileId=${id}`);
+        alert("File deleted successfully!");
+        // Reload file lists
+        GetBasicFileNames();
+        GetTimeLineNames();
+        GetBudgetNames();
+        GetClientDocNames();
+      } catch (error) {
+        console.error("Delete failed:", error);
+        alert("Delete failed. Please try again.");
+      }
+    }
+  };
+
+  // Navigation handlers
+  const handleNavigate = () => {
+    navigate("/AddDevelopersPage", { state: { selectedId: selectedId } });
+  };
+
+  const HandleAssign = (id) => {
+    navigate("/taskcreation", { state: { selectedDevId: id, selectedId } });
+  };
+
+  const HandleTaskListButton = (id) => {
+    navigate("/TaskList", { state: { selectedDevId: id, selectedId } });
+  };
+
+  const FullTaskList = () => {
+    navigate("/FullTaskListPage", { state: { selectedId } });
   };
 
   const ClickUpdate = () => {
@@ -330,364 +197,370 @@ export default function AdminProjectView() {
     }
   };
 
-  const DeleteFile = async (id) => {
-    if (window.confirm("Do you want to Delete item?")){
-    const url = `http://localhost:5228/api/TaskFileDelete/deleteFile?fileId=${id}`;
-
-    try{
-      await axios.delete(url);
-      alert("File Deleted");
-    }
-    catch(error){
-      alert(error);
-
-    }
-  }
-}
-
-
   useEffect(() => {
-    getData();
-    getAssignedDev();
-    GetBasicFileNames();
-    GetTimeLineNames();
-    GetBudgetNames();
-    GetClientDocNames();
-    GetClientInfo();
-  }, [projectData, clientInfo, basicInfo, timeLineInfo, budgetInfo]);
+    const loadData = async () => {
+      setLoading(true);
+      await Promise.all([
+        getData(),
+        getAssignedDev(),
+        GetBasicFileNames(),
+        GetTimeLineNames(),
+        GetBudgetNames(),
+        GetClientDocNames(),
+        GetClientInfo()
+      ]);
+      setLoading(false);
+    };
 
-  const gotofinancereport = () => {
-    navigate("/financedigram", { state: { projectId: selectedId } });
-  };
+    if (selectedId) {
+      loadData();
+    }
+  }, [selectedId]);
 
-  var newTimeSelectedId;
-  const timeReportInfo = (id) => {
-    newTimeSelectedId = id;
-    navigate("/ProjectReport", {
-      state: { newTimeSelectedId: newTimeSelectedId },
-    });
-  };
+  if (loading) {
+    return (
+      <div className="admin-project-container">
+        <div className="loading-state">
+          <div className="loading-spinner"></div>
+          <p>Loading project details...</p>
+        </div>
+      </div>
+    );
+  }
 
-  var newModuleSelectedId;
-  const moduleReportInfo = (id) => {
-    newModuleSelectedId = id;
-    navigate("/ProjectModuleReport", {
-      state: { newModuleSelectedId: newModuleSelectedId },
-    });
-  };
+  const tabs = [
+    { id: 0, label: "Project Info", icon: "📊" },
+    { id: 1, label: "Team", icon: "👥" },
+    { id: 2, label: "Client", icon: "🏢" },
+    { id: 3, label: "Files", icon: "📁" }
+  ];
 
   return (
-    <>
-      {projectData.map((pro) => (
-        <div style={{ display: "flex", float: "right", marginTop: "-48px" }}>
-          <Button onClick={gotofinancereport}>Finance Info</Button> &nbsp;&nbsp;
-          <Button onClick={() => timeReportInfo(pro.projectId)}>
-            Time Progress
-          </Button>{" "}
-          &nbsp;&nbsp;
-          <Button onClick={() => moduleReportInfo(pro.projectId)}>
-            Module Progress
-          </Button>
-        </div>
-      ))}
-
-      <div className="Section">
-        <Tabs
-          defaultActiveKey="project"
-          id="fill-tab-example"
-          className="mb-3"
-          fill
-        >
-          <Tab eventKey="project" title="Project Info">
-             {projectData.map((pro) => (
-              <div className="mainCard">
-                <div className="project-detail">
-                  <h3 className="card-topic">{pro.projectName}</h3>
-                  <p className="description">{pro.projectDescription}</p>
-                  <p className="ViewItems">Project Id : {pro.projectId}</p>
-                  <p className="ViewItems">Technologies : {pro.technologies}</p>
-                  <p className="ViewItems">
-                    Project StartDate : {pro.p_StartDate.split("T")[0]}
-                  </p>
-                  <p className="ViewItems">Project DueDate : {pro.p_DueDate.split("T")[0]}</p>
-                  <p className="ViewItems">Duration : {pro.duration} days</p>
-                  <p className="ViewItems">Objectives : {pro.objectives}</p>
-                </div>
-              </div>
-            ))}
-            <div>
-              <Button onClick={ClickUpdate}>Update Project</Button>
+    <div className="admin-project-container">
+      {/* Header */}
+      <div className="project-header">
+        {projectData.map((pro) => (
+          <div key={pro.projectId}>
+            <h1>{pro.projectName}</h1>
+            <p>{pro.projectDescription}</p>
+            <div className="header-actions">
+              <button className="btn-primary" onClick={ClickUpdate}>
+                Update Project
+              </button>
+              <button className="btn-secondary" onClick={() => navigate(-1)}>
+                Back to List
+              </button>
             </div>
-          </Tab>
+          </div>
+        ))}
+      </div>
 
-          <Tab eventKey="devTeam" title="Team Info">
-            {projectData.map((pro) => (
-              <div className="project-detail">
-                <h3 className="card-topic">{pro.teamName}</h3>
-                <p className="ViewItems">
-                  Project Manager Name : {pro.projectManagerFName}{" "}
-                  {pro.projectManagerLName}
-                </p>
+      {/* Tabs Navigation */}
+      <div className="tabs-container">
+        <div className="tabs-nav">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <span className="tab-icon">{tab.icon}</span>
+              <span className="tab-label">{tab.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div className="tab-content">
+          {/* Project Info Tab */}
+          {activeTab === 0 && (
+            <div className="tab-panel">
+              <h2>Project Information</h2>
+              {projectData.map((pro) => (
+                <div key={pro.projectId} className="project-info-grid">
+                  <div className="info-card">
+                    <label>Project ID</label>
+                    <span>#{pro.projectId}</span>
+                  </div>
+                  <div className="info-card">
+                    <label>Technologies</label>
+                    <span>{pro.technologies}</span>
+                  </div>
+                  <div className="info-card">
+                    <label>Start Date</label>
+                    <span>{new Date(pro.p_StartDate).toLocaleDateString()}</span>
+                  </div>
+                  <div className="info-card">
+                    <label>Due Date</label>
+                    <span>{new Date(pro.p_DueDate).toLocaleDateString()}</span>
+                  </div>
+                  <div className="info-card">
+                    <label>Duration</label>
+                    <span>{pro.duration} days</span>
+                  </div>
+                  <div className="info-card">
+                    <label>Project Manager</label>
+                    <span>{pro.projectManagerFName} {pro.projectManagerLName}</span>
+                  </div>
+                  <div className="info-card full-width">
+                    <label>Objectives</label>
+                    <p>{pro.objectives}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Team Tab */}
+          {activeTab === 1 && (
+            <div className="tab-panel">
+              <div className="section-header">
+                <h2>Team Members</h2>
+                <button className="btn-primary" onClick={handleNavigate}>
+                  Add Developers
+                </button>
               </div>
-            ))}
-
-            <div className="project-detail">
-              <h3 className="card-topic">Developers</h3>
-              <table className="ProjectList">
-                <thead>
-                  <th>DeveloperId</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Job Role</th>
-                  <th></th>
-                </thead>
-
-                <tbody>
-                  {devData.map((dev, index) => (
-                    <tr key={dev.developerId}>
-                      <td>{dev.userId}</td>
-                      <td>{dev.firstName}</td>
-                      <td>{dev.lastName}</td>
-                      <td>{dev.jobRoleName}</td>
-                      <td>
-                        <Button
-                          variant="outline-primary"
+              
+              {devData.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-icon">👥</div>
+                  <h3>No Team Members</h3>
+                  <p>Add developers to start building your team.</p>
+                </div>
+              ) : (
+                <div className="team-grid">
+                  {devData.map((dev) => (
+                    <div key={dev.userId} className="team-member-card">
+                      <div className="member-info">
+                        <div className="member-avatar">
+                          {dev.firstName.charAt(0)}{dev.lastName.charAt(0)}
+                        </div>
+                        <div className="member-details">
+                          <h4>{dev.firstName} {dev.lastName}</h4>
+                          <span className="role-badge">{dev.jobRoleName}</span>
+                          <span className="member-id">ID: {dev.userId}</span>
+                        </div>
+                      </div>
+                      <div className="member-actions">
+                        <button
+                          className="btn-small btn-primary"
                           onClick={() => HandleAssign(dev.userId)}
                         >
                           Assign Task
-                        </Button>
-                        &nbsp; &nbsp;
-                        <Button
-                          style={{ marginRight: "-60px" }}
+                        </button>
+                        <button
+                          className="btn-small btn-secondary"
                           onClick={() => HandleTaskListButton(dev.userId)}
                         >
-                          Task List
-                        </Button>
-
-                        
-                      </td>
-                    </tr>
+                          View Tasks
+                        </button>
+                      </div>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-              <br />
-            </div>
-            <div style={{ display: "flex" }}>
-              <Button onClick={handleNavigate} variant="danger">
-                Add developers
-              </Button>
-              &nbsp;&nbsp;
-              <Button onClick={FullTaskList}>Full Task List</Button>
-            </div>
-          </Tab>
-          <Tab eventKey="client" title="Client Info">
-            {clientData.map((client) => (
-              <div className="project-detail" key={client.clientId}>
-                <h3 className="card-topic">{client.clientName}</h3>
-                <p className="ViewItems">{client.clientDescription}</p>
-                <p className="ViewItems">Client Id : {client.clientId}</p>
-                <p className="ViewItems">NIC : {client.nic}</p>
-                <p className="ViewItems">Address : {client.address}</p>
-                <p className="ViewItems">
-                  Contact Number : {client.contactNumber}
-                </p>
-                <p className="ViewItems">E-mail : {client.email}</p>
+                </div>
+              )}
+              
+              <div className="section-actions">
+                <button className="btn-secondary" onClick={FullTaskList}>
+                  View All Tasks
+                </button>
               </div>
-            ))}
-          </Tab>
-          <Tab eventKey="budget" title="Resources">
-            <div className="project-detail">
-              <h3 className="card-topic">Project Resources</h3>
-              <Form.Group as={Col} className="mb-3">
-                <div className="ViewItems">
-                  <Form.Label>Basic Info: </Form.Label>
-                  <div style={{ display: "flex" }}>
-                    <Form.Control
-                      type="file"
-                      size="sm"
-                      style={{ width: "250px" }}
-                      onChange={handleBasicInfoChange}
-                    />
-                    <Button
-                      onClick={handleBasicInfoUpload}
-                      style={{ marginLeft: "60px", marginBottom: "4px" }}
-                    >
-                      Upload
-                    </Button>
-                  </div>
-                </div>
-              </Form.Group>
-
-              <Form.Group as={Col} className="mb-3">
-                <div className="ViewItems">
-                  <Form.Label> Time Line Info: </Form.Label>
-                  <div style={{ display: "flex" }}>
-                    <Form.Control
-                      type="file"
-                      size="sm"
-                      style={{ width: "250px" }}
-                      onChange={handleTimeLineInfoChange}
-                    />
-                    <Button
-                      onClick={handleTimeLineInfoUpload}
-                      style={{ marginLeft: "60px", marginBottom: "4px" }}
-                    >
-                      Upload
-                    </Button>
-                  </div>
-                </div>
-              </Form.Group>
-
-              <Form.Group as={Col} className="mb-3">
-                <div className="ViewItems">
-                  <Form.Label>Budget Info: </Form.Label>
-                  <div style={{ display: "flex" }}>
-                    <Form.Control
-                      type="file"
-                      size="sm"
-                      style={{ width: "250px" }}
-                      onChange={handleBudgetInfoChange}
-                    />
-                    <Button
-                      onClick={handleBudgetInfoUpload}
-                      style={{ marginLeft: "60px", marginBottom: "4px" }}
-                    >
-                      Upload
-                    </Button>
-                  </div>
-                </div>
-              </Form.Group>
-
-              <Form.Group as={Col} className="mb-3">
-                <div className="ViewItems">
-                  <Form.Label>Client Declarement: </Form.Label>
-                  <div style={{ display: "flex" }}>
-                    <Form.Control
-                      type="file"
-                      size="sm"
-                      style={{ width: "250px" }}
-                      onChange={handleClientInfoChange}
-                    />
-                    <Button
-                      onClick={handleClientInfoUpload}
-                      style={{ marginLeft: "60px", marginBottom: "4px" }}
-                    >
-                      Upload
-                    </Button>
-                  </div>
-                </div>
-              </Form.Group>
             </div>
+          )}
 
-            <div className="project-detail">
-              <h3 className="card-topic">Uploaded Resources</h3>
+          {/* Client Tab */}
+          {activeTab === 2 && (
+            <div className="tab-panel">
+              <h2>Client Information</h2>
+              {clientData.map((client) => (
+                <div key={client.clientId} className="client-info">
+                  <div className="client-header">
+                    <h3>{client.clientName}</h3>
+                    <span className="client-id">ID: #{client.clientId}</span>
+                  </div>
+                  <div className="client-details-grid">
+                    <div className="info-card">
+                      <label>NIC</label>
+                      <span>{client.nic}</span>
+                    </div>
+                    <div className="info-card">
+                      <label>Contact Number</label>
+                      <span>{client.contactNumber}</span>
+                    </div>
+                    <div className="info-card">
+                      <label>Email</label>
+                      <span>{client.email}</span>
+                    </div>
+                    <div className="info-card full-width">
+                      <label>Address</label>
+                      <span>{client.address}</span>
+                    </div>
+                    <div className="info-card full-width">
+                      <label>Description</label>
+                      <p>{client.clientDescription}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
-              <div className="ViewItems" style={{ display: "flex" }}>
-                <Form.Group as={Col} className="mb-3">
-                  <Form.Label>Basic Info: </Form.Label>
-
-                  {basicNames.map((file, index) => (
-                    <ul>
-                      <li
-                        
+          {/* Files Tab */}
+          {activeTab === 3 && (
+            <div className="tab-panel">
+              <h2>Project Files</h2>
+              <div className="files-section">
+                {/* File Upload Section */}
+                <div className="file-categories">
+                  <div className="file-category">
+                    <h3>Basic Information</h3>
+                    <div className="file-upload-area">
+                      <input
+                        type="file"
+                        onChange={(e) => setBasicInfo(e.target.files[0])}
+                        className="file-input"
+                      />
+                      <button
+                        className="btn-primary btn-small"
+                        onClick={() => handleFileUpload(basicInfo, 'basic')}
                       >
-                        <button
-                        onClick={() =>
-                          download(file.localStoragePath, file.fileName)
-                        }
-                        key={file.fileId}
-                          className="downbutton"
-                          style={{ borderRadius: "7px", padding: "0.5px" }}
-                        >
-                          {file.fileName}
-                        </button>
-                        &nbsp;&nbsp;
-                        <DeleteIcon onClick={()=>DeleteFile(file.fileId)} style={{color:"white"}}></DeleteIcon>
+                        Upload
+                      </button>
+                    </div>
+                    <div className="file-list">
+                      {basicNames.map((file) => (
+                        <div key={file.id} className="file-item">
+                          <span
+                            className="file-name"
+                            onClick={() => download(file.filePath, file.fileName)}
+                          >
+                            📄 {file.fileName}
+                          </span>
+                          <button
+                            className="delete-btn"
+                            onClick={() => DeleteFile(file.id)}
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-                      </li>
-                    </ul>
-                  ))}
-                </Form.Group>
-
-                <Form.Group as={Col} className="mb-3">
-                  <Form.Label>TimeLine Info: </Form.Label>
-
-                  {timelineNames.map((file, index) => (
-                    <ul>
-                      <li
-                        
-                        key={file.fileId}
+                  <div className="file-category">
+                    <h3>Timeline</h3>
+                    <div className="file-upload-area">
+                      <input
+                        type="file"
+                        onChange={(e) => setTimeLineInfo(e.target.files[0])}
+                        className="file-input"
+                      />
+                      <button
+                        className="btn-primary btn-small"
+                        onClick={() => handleFileUpload(timeLineInfo, 'timeline')}
                       >
-                        <button
-                        onClick={() =>
-                          download(file.localStoragePath, file.fileName)
-                        }
-                          className="downbutton"
-                          style={{ borderRadius: "7px", padding: "0.5px" }}
-                        >
-                          {file.fileName}
-                        </button>
-                        &nbsp;&nbsp;
-                        <DeleteIcon onClick={()=>DeleteFile(file.fileId)} style={{color:"white"}}></DeleteIcon>
+                        Upload
+                      </button>
+                    </div>
+                    <div className="file-list">
+                      {timelineNames.map((file) => (
+                        <div key={file.id} className="file-item">
+                          <span
+                            className="file-name"
+                            onClick={() => download(file.filePath, file.fileName)}
+                          >
+                            📄 {file.fileName}
+                          </span>
+                          <button
+                            className="delete-btn"
+                            onClick={() => DeleteFile(file.id)}
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-                      </li>
-                    </ul>
-                  ))}
-                </Form.Group>
-
-                <Form.Group as={Col} className="mb-3">
-                  <Form.Label>Budget Info: </Form.Label>
-
-                  {budgetNames.map((file, index) => (
-                    <ul>
-                      <li
-                       
-                        key={file.fileId}
+                  <div className="file-category">
+                    <h3>Budget Information</h3>
+                    <div className="file-upload-area">
+                      <input
+                        type="file"
+                        onChange={(e) => setBudgetInfo(e.target.files[0])}
+                        className="file-input"
+                      />
+                      <button
+                        className="btn-primary btn-small"
+                        onClick={() => handleFileUpload(budgetInfo, 'budget')}
                       >
-                        <button
-                         onClick={() =>
-                          download(file.localStoragePath, file.fileName)
-                        }
-                          className="downbutton"
-                          style={{ borderRadius: "7px", padding: "0.5px" }}
-                        >
-                          {file.fileName}
-                        </button>
-                        &nbsp;&nbsp;
-                        <DeleteIcon onClick={()=>DeleteFile(file.fileId)} style={{color:"white"}}></DeleteIcon>
+                        Upload
+                      </button>
+                    </div>
+                    <div className="file-list">
+                      {budgetNames.map((file) => (
+                        <div key={file.id} className="file-item">
+                          <span
+                            className="file-name"
+                            onClick={() => download(file.filePath, file.fileName)}
+                          >
+                            📄 {file.fileName}
+                          </span>
+                          <button
+                            className="delete-btn"
+                            onClick={() => DeleteFile(file.id)}
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-                      </li>
-                    </ul>
-                  ))}
-                </Form.Group>
-
-                <Form.Group as={Col} className="mb-3">
-                  <Form.Label>ClientDocument Info: </Form.Label>
-
-                  {clientDocNames.map((file, index) => (
-                    <ul>
-                      <li
-                       
-                        key={file.fileId}
+                  <div className="file-category">
+                    <h3>Client Documents</h3>
+                    <div className="file-upload-area">
+                      <input
+                        type="file"
+                        onChange={(e) => setClientInfo(e.target.files[0])}
+                        className="file-input"
+                      />
+                      <button
+                        className="btn-primary btn-small"
+                        onClick={() => handleFileUpload(clientInfo, 'client')}
                       >
-                        <button
-                           onClick={() =>
-                            download(file.localStoragePath, file.fileName)
-                          }                        
-                        className="downbutton">{file.fileName}</button>
-                      </li>
-                      &nbsp;&nbsp;
-                        <DeleteIcon onClick={()=>DeleteFile(file.fileId)} style={{color:"white"}}></DeleteIcon>
-
-                    </ul>
-                  ))}
-                </Form.Group>
+                        Upload
+                      </button>
+                    </div>
+                    <div className="file-list">
+                      {clientDocNames.map((file) => (
+                        <div key={file.id} className="file-item">
+                          <span
+                            className="file-name"
+                            onClick={() => download(file.filePath, file.fileName)}
+                          >
+                            📄 {file.fileName}
+                          </span>
+                          <button
+                            className="delete-btn"
+                            onClick={() => DeleteFile(file.id)}
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="file-note">
+                  <p>💡 Click on file names to download them</p>
+                </div>
               </div>
-              <p style={{ color: "red" }}>*click on file to download</p>
             </div>
-          </Tab>
-        </Tabs>
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 }

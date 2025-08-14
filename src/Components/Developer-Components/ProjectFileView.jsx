@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from "react-router-dom";
-import './Styles/TaskStyle.css';
+import './Styles/ProfileFIleView.css';
 
 export default function ProjectFileView() {
   const [isLoading, setIsLoading] = useState(true);

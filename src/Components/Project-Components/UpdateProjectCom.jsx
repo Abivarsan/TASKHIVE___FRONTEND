@@ -1,314 +1,388 @@
+// UpdateProjectCom.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
-import TextField from "@mui/material/TextField";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import InputGroup from "react-bootstrap/InputGroup";
-
-import "react-datepicker/dist/react-datepicker.css";
-import "./Styles/datepickerStyle.css";
-
-import "./Styles/FormStyle.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import "./Styles/ProjectCreationForm.css";
 
 export default function UpdateProjectCom() {
   const [oldData, setOldData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  
   const location = useLocation();
-  const proId = location.state.selectedId;
+  const navigate = useNavigate();
+  const proId = location.state?.selectedId;
 
-  const [projectName, setProjectName] = useState("");
-  const [description, setDescription] = useState("");
-  const [objectives, setObjectives] = useState("");
-  const [projectTeamName, setProjectTeamName] = useState("");
-  const [timeDuration, setTimeDuration] = useState("");
-  const [timeline, setTimeline] = useState("");
-  const [budgetAllocation, setBudgetAllocation] = useState("");
-  const [technologies, setTechnologies] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  // Form state
+  const [formData, setFormData] = useState({
+    projectName: "",
+    description: "",
+    objectives: "",
+    projectTeamName: "",
+    timeline: "",
+    budgetAllocation: "",
+    technologies: "",
+    startDate: "",
+    dueDate: "",
+    timeDuration: 0
+  });
 
+  // Get existing project data
   const GetOldData = async () => {
-    const url = `http://localhost:5228/api/CreateProject/GetDetails?ProId=${proId}`;
-
     try {
-      const response = await axios.get(url);
+      setLoading(true);
+      const response = await axios.get(
+        `http://localhost:5228/api/CreateProject/GetDetails?ProId=${proId}`
+      );
       const data = response.data;
       setOldData(data);
 
-      // Set initial form values
       if (data.length > 0) {
         const project = data[0];
-        setProjectName(project.projectName);
-        setDescription(project.projectDescription);
-        setObjectives(project.objectives);
-        setProjectTeamName(project.teamName);
-        setTimeline(project.timeline);
-        setBudgetAllocation(project.budgetEstimation);
-        setTechnologies(project.technologies);
-        setStartDate(project.p_StartDate.split("T")[0]);
-        setDueDate(project.p_DueDate.split("T")[0]);
+        setFormData({
+          projectName: project.projectName || "",
+          description: project.projectDescription || "",
+          objectives: project.objectives || "",
+          projectTeamName: project.teamName || "",
+          timeline: project.timeline || "",
+          budgetAllocation: project.budgetEstimation || "",
+          technologies: project.technologies || "",
+          startDate: project.p_StartDate ? project.p_StartDate.split("T")[0] : "",
+          dueDate: project.p_DueDate ? project.p_DueDate.split("T")[0] : "",
+          timeDuration: project.duration || 0
+        });
       }
     } catch (error) {
-      alert(error);
+      console.error("Error fetching project data:", error);
+      alert("Failed to load project data. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    GetOldData();
-  }, []);
-
-  const handlePNameChange = (value) => {
-    setProjectName(value);
-  };
-
-  const handleDescriptionChange = (value) => {
-    setDescription(value);
-  };
-
-  const handleObjectiveChange = (value) => {
-    setObjectives(value);
-  };
-
-  const handleTeamNameChange = (value) => {
-    setProjectTeamName(value);
-  };
-
-  const handleTimelineChange = (value) => {
-    setTimeline(value);
-  };
-
-  const handleBudgetChange = (value) => {
-    setBudgetAllocation(value);
-  };
-
-  const handleTechnologyChange = (value) => {
-    setTechnologies(value);
-  };
-
-  function getDaysBetweenDates(startDate, endDate) {
-    if (!(startDate instanceof Date) || !(endDate instanceof Date)) {
-      return null;
+    if (proId) {
+      GetOldData();
     }
+  }, [proId]);
 
+  // Calculate duration between dates
+  const getDaysBetweenDates = (startDate, endDate) => {
+    if (!(startDate instanceof Date) || !(endDate instanceof Date)) {
+      return 0;
+    }
     const oneDay = 1000 * 60 * 60 * 24;
     const differenceInMs = endDate.getTime() - startDate.getTime();
-
     return Math.floor(differenceInMs / oneDay);
-  }
+  };
 
+  // Update duration when dates change
   useEffect(() => {
-    if (startDate && dueDate) {
-      const time = getDaysBetweenDates(new Date(startDate), new Date(dueDate));
-      setTimeDuration(time);
+    if (formData.startDate && formData.dueDate) {
+      const duration = getDaysBetweenDates(
+        new Date(formData.startDate),
+        new Date(formData.dueDate)
+      );
+      setFormData(prev => ({ ...prev, timeDuration: duration }));
     }
-  }, [startDate, dueDate]);
+  }, [formData.startDate, formData.dueDate]);
 
-  const navigate = useNavigate();
-  const [validated, setValidated] = useState(false);
+  // Handle input changes
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: "" }));
+    }
+  };
 
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-      alert("Input the required fields");
-    } else {
-      event.preventDefault();
+  // Form validation
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.projectName.trim()) {
+      newErrors.projectName = "Project name is required";
+    }
+    if (!formData.description.trim()) {
+      newErrors.description = "Description is required";
+    }
+    if (!formData.objectives.trim()) {
+      newErrors.objectives = "Objectives are required";
+    }
+    if (!formData.projectTeamName.trim()) {
+      newErrors.projectTeamName = "Team name is required";
+    }
+    if (!formData.timeline.trim()) {
+      newErrors.timeline = "Timeline is required";
+    }
+    if (!formData.budgetAllocation.trim()) {
+      newErrors.budgetAllocation = "Budget allocation is required";
+    }
+    if (!formData.technologies.trim()) {
+      newErrors.technologies = "Technologies are required";
+    }
+    if (!formData.startDate) {
+      newErrors.startDate = "Start date is required";
+    }
+    if (!formData.dueDate) {
+      newErrors.dueDate = "Due date is required";
+    }
+
+    if (formData.startDate && formData.dueDate && 
+        new Date(formData.startDate) >= new Date(formData.dueDate)) {
+      newErrors.dueDate = "Due date must be after start date";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    
+    if (!validateForm()) {
+      alert("Please fill in all required fields correctly");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
       const data = {
-        ProjectName: projectName,
-        ProjectDescription: description,
-        Technologies: technologies,
-        BudgetEstimation: budgetAllocation,
-        P_StartDate: startDate,
-        P_DueDate: dueDate,
-        Duration: timeDuration,
-        Objectives: objectives,
-        TeamName: projectTeamName,
-        TimeLine: timeline,
+        ProjectName: formData.projectName,
+        ProjectDescription: formData.description,
+        Technologies: formData.technologies,
+        BudgetEstimation: formData.budgetAllocation,
+        P_StartDate: formData.startDate,
+        P_DueDate: formData.dueDate,
+        Duration: formData.timeDuration,
+        Objectives: formData.objectives,
+        TeamName: formData.projectTeamName,
+        TimeLine: formData.timeline,
         ClientID: 0,
         ProjectManagerId: 0
       };
 
-      const url = `http://localhost:5228/api/CreateProject/${proId}`;
-
-      axios
-        .put(url, data)
-        .then((response) => {
-          alert("Project updated successfully");
-          setValidated(false);
-          navigate(-1);
-        })
-        .catch((error) => {
-          alert(error);
-        });
+      await axios.put(`http://localhost:5228/api/CreateProject/${proId}`, data);
+      
+      alert("Project updated successfully!");
+      navigate(-1);
+    } catch (error) {
+      console.error("Error updating project:", error);
+      alert("Failed to update project. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-
-    setValidated(true);
   };
 
+  const handleCancel = () => {
+    if (window.confirm("Are you sure you want to cancel? All changes will be lost.")) {
+      navigate(-1);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="update-project-container">
+        <div className="loading-state">
+          <div className="loading-spinner"></div>
+          <p>Loading project data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
-        <div className="Section">
-          <h3 className="SectionHeading">Project Initialization</h3>
-          <Row className="mb-3">
-            <Form.Group as={Col}>
-              <Form.Label htmlFor="projectName">Project Name:</Form.Label>
-              <InputGroup hasValidation>
-                <Form.Control
-                  autoFocus
-                  required
-                  type="text"
-                  className="formField"
-                  id="projectName"
-                  value={projectName}
-                  style={{ color: "black", fontSize: "18px" }}
-                  onChange={(e) => handlePNameChange(e.target.value)}
-                />
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                <Form.Control.Feedback type="invalid">
-                  Please enter project name.
-                </Form.Control.Feedback>
-              </InputGroup>
-            </Form.Group>
-          </Row>
+    <div className="update-project-container">
+      <div className="form-header">
+        <h1>Update Project</h1>
+        <p>Modify project details and save changes</p>
+      </div>
 
-          <Form.Group className="mb-3">
-            <Form.Label htmlFor="description">Project Description:</Form.Label>
-            <Form.Control
-              id="description"
-              style={{ color: "black", fontSize: "18px" }}
-              className="formField"
-              value={description}
-              onChange={(e) => handleDescriptionChange(e.target.value)}
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Project Objectives:</Form.Label>
-            <Form.Control
-              id="objectives"
-              value={objectives}
-              onChange={(e) => handleObjectiveChange(e.target.value)}
-              style={{ color: "black", fontSize: "18px" }}
-
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Technologies</Form.Label>
-            <Form.Control
-              type="text"
-              className="formField"
-              style={{ color: "black", fontSize: "18px" }}
-
-              id="technologies"
-              value={technologies}
-              onChange={(e) => handleTechnologyChange(e.target.value)}
-            />
-          </Form.Group>
-        </div>
-
-        <div className="Section">
-          <h3 className="SectionHeading">Development Team Information</h3>
-          <Row className="mb-3">
-            <Form.Group as={Col}>
-              <Form.Label>Project Team Name:</Form.Label>
-              <InputGroup hasValidation>
-                <Form.Control
-                  type="text"
-                  required
-                  className="formField"
-                  id="projectTeamName"
-                  style={{ color: "black", fontSize: "18px" }}
-                  value={projectTeamName}
-                  onChange={(e) => handleTeamNameChange(e.target.value)}
-                />
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                <Form.Control.Feedback type="invalid">
-                  Please enter team name.
-                </Form.Control.Feedback>
-              </InputGroup>
-            </Form.Group>
-          </Row>
-        </div>
-
-        <div className="Section">
-          <h2 className="SectionHeading">Project Planning</h2>
-          <Row className="mb-3" style={{ width: "65%" }}>
-            <Form.Group as={Col}>
-              <Form.Label>Start Date:</Form.Label>
-              <InputGroup hasValidation>
-                <TextField
-                  aria-required
-                  style={{
-                    backgroundColor: "whitesmoke",
-                    borderRadius: "10px",
-                    width: "300px"
-                  }}
-                  margin="dense"
-                  id="last_updated"
-                  type="date"
-                  fullWidth
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                <Form.Control.Feedback type="invalid">
-                  Please select start date.
-                </Form.Control.Feedback>
-              </InputGroup>
-            </Form.Group>
-
-            <Form.Group as={Col}>
-              <Form.Label>Due Date:</Form.Label>
-              <TextField
-                style={{
-                  backgroundColor: "whitesmoke",
-                  borderRadius: "10px",
-                  width: "300px"
-                }}
-                margin="dense"
-                id="last_updated"
-                type="date"
-                fullWidth
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
+      <form onSubmit={handleSubmit} className="update-project-form">
+        {/* Project Information Section */}
+        <div className="form-section">
+          <h2 className="section-title">Project Information</h2>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="projectName">Project Name *</label>
+              <input
+                type="text"
+                id="projectName"
+                value={formData.projectName}
+                onChange={(e) => handleInputChange('projectName', e.target.value)}
+                className={errors.projectName ? "error" : ""}
+                placeholder="Enter project name"
               />
-            </Form.Group>
-          </Row>
+              {errors.projectName && (
+                <span className="error-message">{errors.projectName}</span>
+              )}
+            </div>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Project Time Line</Form.Label>
-            <Form.Control
-              type="text"
-              id="timeline"
-              style={{ color: "black", fontSize: "18px" }}
-              value={timeline}
-              onChange={(e) => handleTimelineChange(e.target.value)}
+            <div className="form-group">
+              <label htmlFor="teamName">Team Name *</label>
+              <input
+                type="text"
+                id="teamName"
+                value={formData.projectTeamName}
+                onChange={(e) => handleInputChange('projectTeamName', e.target.value)}
+                className={errors.projectTeamName ? "error" : ""}
+                placeholder="Enter team name"
+              />
+              {errors.projectTeamName && (
+                <span className="error-message">{errors.projectTeamName}</span>
+              )}
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="description">Project Description *</label>
+            <textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => handleInputChange('description', e.target.value)}
+              className={errors.description ? "error" : ""}
+              placeholder="Describe the project..."
+              rows="4"
             />
-          </Form.Group>
+            {errors.description && (
+              <span className="error-message">{errors.description}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="objectives">Objectives *</label>
+            <textarea
+              id="objectives"
+              value={formData.objectives}
+              onChange={(e) => handleInputChange('objectives', e.target.value)}
+              className={errors.objectives ? "error" : ""}
+              placeholder="List the project objectives..."
+              rows="3"
+            />
+            {errors.objectives && (
+              <span className="error-message">{errors.objectives}</span>
+            )}
+          </div>
         </div>
 
-        <div className="Section">
-          <Form.Group className="mb-3">
-            <Form.Label>Budget Allocation</Form.Label>
-            <Form.Control
-              type="text"
-              style={{ color: "black", fontSize: "18px" }}
-              id="budgetAllocation"
+        {/* Project Details Section */}
+        <div className="form-section">
+          <h2 className="section-title">Project Timeline & Budget</h2>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="startDate">Start Date *</label>
+              <input
+                type="date"
+                id="startDate"
+                value={formData.startDate}
+                onChange={(e) => handleInputChange('startDate', e.target.value)}
+                className={errors.startDate ? "error" : ""}
+              />
+              {errors.startDate && (
+                <span className="error-message">{errors.startDate}</span>
+              )}
+            </div>
 
-              value={budgetAllocation}
-              onChange={(e) => handleBudgetChange(e.target.value)}
+            <div className="form-group">
+              <label htmlFor="dueDate">Due Date *</label>
+              <input
+                type="date"
+                id="dueDate"
+                value={formData.dueDate}
+                onChange={(e) => handleInputChange('dueDate', e.target.value)}
+                className={errors.dueDate ? "error" : ""}
+              />
+              {errors.dueDate && (
+                <span className="error-message">{errors.dueDate}</span>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="duration">Duration (Days)</label>
+              <input
+                type="number"
+                id="duration"
+                value={formData.timeDuration}
+                readOnly
+                placeholder="Auto-calculated"
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="budget">Budget Allocation *</label>
+              <input
+                type="number"
+                id="budget"
+                value={formData.budgetAllocation}
+                onChange={(e) => handleInputChange('budgetAllocation', e.target.value)}
+                className={errors.budgetAllocation ? "error" : ""}
+                placeholder="Enter budget amount"
+                min="0"
+                step="0.01"
+              />
+              {errors.budgetAllocation && (
+                <span className="error-message">{errors.budgetAllocation}</span>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="timeline">Timeline *</label>
+              <input
+                type="text"
+                id="timeline"
+                value={formData.timeline}
+                onChange={(e) => handleInputChange('timeline', e.target.value)}
+                className={errors.timeline ? "error" : ""}
+                placeholder="Enter project timeline"
+              />
+              {errors.timeline && (
+                <span className="error-message">{errors.timeline}</span>
+              )}
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="technologies">Technologies *</label>
+            <input
+              type="text"
+              id="technologies"
+              value={formData.technologies}
+              onChange={(e) => handleInputChange('technologies', e.target.value)}
+              className={errors.technologies ? "error" : ""}
+              placeholder="e.g., React, Node.js, MongoDB"
             />
-          </Form.Group>
+            {errors.technologies && (
+              <span className="error-message">{errors.technologies}</span>
+            )}
+          </div>
         </div>
 
-        <Button type="submit">Submit form</Button>
-      </Form>
-    </>
+        {/* Form Actions */}
+        <div className="form-actions">
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={handleCancel}
+            disabled={submitting}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="btn-primary"
+            disabled={submitting}
+          >
+            {submitting ? "Updating Project..." : "Update Project"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

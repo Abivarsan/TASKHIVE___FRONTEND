@@ -15,7 +15,7 @@ function ProjectDeveloper() {
 
       <div className="Content">
 
-            <ProjectHeader/>
+          
             
             <Projectlist/>
 
