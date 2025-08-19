@@ -1,95 +1,113 @@
+// ClientList.js
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
-import SearchBar from "../../Components/Common-Components/Searchbar.jsx"; // Ensure the import path is correct
-import apiRequest from '../../Auth/ApiService.js'; // Ensure the import path is correct
+import { useNavigate } from "react-router-dom";
+import SearchBar from "../../Components/Common-Components/Searchbar.jsx";
+import apiRequest from "../../Auth/ApiService.js";
+import "./styles/ClientList.css";
 
-export default function ClientListComponent() {
-  const [data, setData] = useState([]);
+export default function ClientList() {
+  const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchData(); // Fetch data on component mount
+    fetchClients();
   }, []);
 
-  const fetchData = async () => {
+  const fetchClients = async () => {
     try {
       const result = await apiRequest("http://localhost:5228/api/Client/list");
-      setData(result);
-    } catch (error) {
-      console.error("Error fetching data:", error);
+      setClients(result);
+    } catch (err) {
+      console.error("Error fetching clients:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUserSelection = (id) => {
-    console.log(`Navigating to: /clientProfilePage/${id}`);
-    navigate(`/clientProfilePage/${id}`);
-  };
-
-  const handleAddUser = () => {
-    navigate('/clientCreation');
-  };
-
-  const handleSearch = async (searchTerm) => {
-    if (searchTerm.trim() === "") {
-      fetchData(); // If search term is empty, fetch all data
+  const handleSearch = async (term) => {
+    setSearchTerm(term);
+    if (!term.trim()) {
+      fetchClients();
     } else {
       try {
-        const result = await apiRequest(`http://localhost:5228/api/Client/search?term=${searchTerm}`);
-        setData(result);
-      } catch (error) {
-        console.error("Error searching data:", error);
+        const result = await apiRequest(
+          `http://localhost:5228/api/Client/search?term=${term}`
+        );
+        setClients(result);
+      } catch (err) {
+        console.error("Search error:", err);
       }
     }
   };
 
+  const viewClient = (id) => {
+    navigate(`/clientProfilePage/${id}`);
+  };
+
+  const addClient = () => {
+    navigate("/clientCreation");
+  };
+
   if (loading) {
     return (
-      <div className="container mt-5">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+      <div className="client-list-loading">
+        <div className="spinner"></div>
+        <div>Loading clients…</div>
       </div>
     );
   }
 
   return (
-    <div className="container mt-5">
-      <div className="d-flex justify-content-between mb-3">
-        <h2>Client List</h2>
-        <button 
-          style={{ backgroundColor: '#325472', borderColor: 'black' }} 
-          className="btn btn-primary" 
-          onClick={handleAddUser}
-        >
-          + Add New Client
+    <div className="client-list-container">
+      <div className="client-list-header">
+        <h2>Clients</h2>
+        <button className="add-btn" onClick={addClient}>
+          + Add Client
         </button>
       </div>
-      
-      <SearchBar onSearch={handleSearch} />
-
-      <table className="table table-striped mt-3">
-        <thead className="thead-dark">
-          <tr>
-            <th>Client Id</th>
-            <th>User Name</th>
-            <th>Full Name</th>
-            <th>Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((user, index) => (
-            <tr key={index} onClick={() => handleUserSelection(user.clientId)}>
-              <td>{user.clientId}</td>
-              <td>{user.userName}</td>
-              <td>{user.clientName}</td>
-              <td>{user.email}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="client-list-controls">
+        <SearchBar onSearch={handleSearch} />
+      </div>
+      {clients.length === 0 ? (
+        <div className="empty-state">
+          <div className="icon">📭</div>
+          <div>No clients found{searchTerm && ` for “${searchTerm}”`}.</div>
+        </div>
+      ) : (
+        <div className="table-container">
+          <table className="ClientList">
+            <thead>
+              <tr>
+                <th>Client ID</th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {clients.map((c) => (
+                <tr key={c.clientId}>
+                  <td>#{c.clientId}</td>
+                  <td>{c.userName}</td>
+                  <td>{c.clientName?? "-"}</td> 
+                  <td>{c.email}</td>
+                  <td>
+                    <button
+                      className="view-btn"
+                      onClick={() => viewClient(c.clientId)}
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,77 +1,149 @@
+// ClientCreationForm.js
 import React, { useState } from "react";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import '../Admin-Components/styles/UserCreationForm.css';
 import { useNavigate } from 'react-router-dom';
 import apiRequest from '../../Auth/ApiService';
 import emailjs from "emailjs-com";
+import './styles/ClientCreationForm.css';
+
+// Initialize EmailJS
+emailjs.init('WcuGZ2ivU-n9OBxuF');
 
 export default function ClientCreationForm() {
-  const [fullName, setFullName] = useState('');
-  const [userName, setUserName] = useState('');
-  const [address, setAddress] = useState('');
-  const [nic, setNIC] = useState('');
-  const [mobileNumber, setContactNumber] = useState('');
-  const [email, setEmail] = useState('');
-  const [clientDescription, setClientDescription] = useState('');
-  const [totalPayment, setTotalPayment]= useState('');
-  const [userCategory, setUserCategory] = useState('');
+  // Form state
+  const [formData, setFormData] = useState({
+    fullName: '',
+    userName: '',
+    address: '',
+    nic: '',
+    mobileNumber: '',
+    email: '',
+    clientDescription: '',
+    totalPayment: '',
+    userCategory: 'CLIENT'
+  });
+
+  // Other state
   const [formErrors, setFormErrors] = useState({});
-  const [formSubmitted, setFormSubmitted] = useState(false); 
+  const [formSubmitted, setFormSubmitted] = useState(false);
   const [randomPassword, setRandomPassword] = useState("");
   const [userDetails, setUserDetails] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
 
+  // Handle form input changes
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+
+    // Clear error when user starts typing
+    if (formErrors[field]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [field]: ""
+      }));
+    }
+  };
+
+  // Form validation
+  const validateForm = () => {
+    const errors = {};
+    let isValid = true;
+
+    // Check required fields
+    const requiredFields = ['fullName', 'userName', 'address', 'nic', 'mobileNumber', 'email', 'clientDescription', 'totalPayment'];
+    
+    requiredFields.forEach(field => {
+      if (!formData[field] || !formData[field].toString().trim()) {
+        errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')} is required`;
+        isValid = false;
+      }
+    });
+
+    // Validate NIC
+    if (formData.nic && formData.nic.length !== 12) {
+      errors.nic = 'NIC must have 12 digits';
+      isValid = false;
+    }
+
+    // Validate email
+    const emailPattern = /\S+@\S+\.\S+/;
+    if (formData.email && !emailPattern.test(formData.email)) {
+      errors.email = 'Email must be in valid format';
+      isValid = false;
+    }
+
+    // Validate mobile number
+    const mobilePattern = /^[0-9]{10}$/;
+    if (formData.mobileNumber && !mobilePattern.test(formData.mobileNumber)) {
+      errors.mobileNumber = 'Mobile number must be 10 digits';
+      isValid = false;
+    }
+
+    // Validate total payment
+    if (formData.totalPayment && (isNaN(formData.totalPayment) || parseFloat(formData.totalPayment) <= 0)) {
+      errors.totalPayment = 'Total payment must be a valid positive number';
+      isValid = false;
+    }
+
+    setFormErrors(errors);
+    return isValid;
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
-  
+
     if (!validateForm()) {
+      alert('Please fix all errors before submitting');
       return;
     }
-  
+
+    setLoading(true);
+
     const data = {
-      ClientName: fullName,
-      UserName: userName,
-      Address: address,
-      NIC: nic,
-      ContactNumber: mobileNumber,
-      Email: email,
-      UserCategoryType: userCategory,
-      ClientDescription: clientDescription,
-      TotalPayment: totalPayment,
+      ClientName: formData.fullName,
+      UserName: formData.userName,
+      Address: formData.address,
+      NIC: formData.nic,
+      ContactNumber: formData.mobileNumber,
+      Email: formData.email,
+      UserCategoryType: formData.userCategory,
+      ClientDescription: formData.clientDescription,
+      TotalPayment: parseFloat(formData.totalPayment),
     };
-  
+
     try {
+      console.log('Sending data:', data);
       const response = await apiRequest('http://localhost:5228/api/Client/register', 'POST', data);
       console.log('API Response:', response);
-  
+
       const randomPassword = response;
       setRandomPassword(randomPassword);
-  
+
       const userDetails = {
         UserName: data.UserName,
         Email: data.Email,
       };
       setUserDetails(userDetails);
 
-      alert("User registered successfully. Sending email with credentials...");
-      
-      // Call sendEmail after successful registration
-      sendEmail(randomPassword, userDetails.UserName, userDetails.Email);
+      alert("Client registered successfully. Sending email with credentials...");
+      await sendEmail(randomPassword, userDetails.UserName, userDetails.Email);
       clearForm();
 
     } catch (error) {
-      console.error("User registration failed:", error);
-      alert("Failed to register user. Please try again later.");
+      console.error("Client registration failed:", error);
+      alert("Failed to register client. Username may already exist or there was a server error.");
+    } finally {
+      setLoading(false);
     }
   };
-  
-  const sendEmail = (password, userName, userEmail) => {
-     const serviceID = 'service_42yhret';
+
+  // Send email function
+  const sendEmail = async (password, userName, userEmail) => {
+    const serviceID = 'service_42yhret';
     const templateID = 'template_qtrb6ll';
     const publicKey = 'WcuGZ2ivU-n9OBxuF';
 
@@ -81,141 +153,187 @@ export default function ClientCreationForm() {
       user_mail: userEmail
     };
 
-    console.log('Sending email with:', serviceID, templateID, templateParams, publicKey);
-    emailjs
-      .send(serviceID, templateID, templateParams, publicKey)
-      .then((response) => {
-        console.log("SUCCESS!", response.status, response.text);
-        alert("Email sent successfully!");
-        navigate("/clientlist");
-      })
-      .catch((error) => {
-        console.error("FAILED...", error);
-        alert("Failed to send email. Please try again later.");
-      });
+    try {
+      console.log('Sending email with:', serviceID, templateID, templateParams, publicKey);
+      const response = await emailjs.send(serviceID, templateID, templateParams, publicKey);
+      console.log("Email sent successfully!", response.status, response.text);
+      alert("Email sent successfully!");
+      navigate("/clientlist");
+    } catch (error) {
+      console.error("Email sending failed:", error);
+      alert("Failed to send email. Please try again later.");
+    }
   };
 
+  // Clear form
   const clearForm = () => {
-    setFullName('');
-    setUserName('');
-    setAddress('');
-    setContactNumber('');
-    setEmail('');
-    setNIC('');
-    setUserCategory('');
-    setClientDescription('');
-    setTotalPayment('');
+    setFormData({
+      fullName: '',
+      userName: '',
+      address: '',
+      nic: '',
+      mobileNumber: '',
+      email: '',
+      clientDescription: '',
+      totalPayment: '',
+      userCategory: 'CLIENT'
+    });
     setFormErrors({});
-  };
-
-  const validateForm = () => {
-    const errors = {};
-    let isValid = true;
-    
-    if (nic.length !== 12) {
-      errors.nic = 'NIC must have 12 digits';
-      isValid = false;
-    }
-
-    const emailPattern = /\S+@\S+\.\S+/;
-    if (!emailPattern.test(email)) {
-      errors.email = 'Email must be in the format "example@gmail.com"';
-      isValid = false;
-    }
-
-    if (!userName || !address || !nic || !mobileNumber || !email || !userCategory || !clientDescription || !totalPayment ) {
-      errors.required = 'All fields are required';
-      isValid = false;
-    }
-
-    setFormErrors(errors);
-    return isValid;
+    setFormSubmitted(false);
   };
 
   return (
-    <div className="content-component">
-      <div className="form_group">
-        <div> 
-          <h3>Client Creation Form</h3>
-        </div>
-        <Form onSubmit={handleSubmit}>
-          
-            <Form.Group as={Col} controlId="formGridFirstName">
-              <Form.Label>Client FullName</Form.Label>
-              <Form.Control type="text" placeholder="Enter FullName" value={fullName} onChange={(e) => setFullName(e.target.value)} />
-            </Form.Group>
-         
+    <div className="client-creation-container">
+      <div className="client-creation-card">
+        <h2>Create New Client</h2>
 
-          <Form.Group className="mb-10" controlId="formGridUserName">
-            <Form.Label>User Name</Form.Label>
-            <Form.Control type="text" placeholder="Enter user name" value={userName} onChange={(e) => setUserName(e.target.value)} />
-          </Form.Group>
-
-          <Form.Group className="mb-10" controlId="formGridAddress">
-            <Form.Label>Address</Form.Label>
-            <Form.Control type="text" placeholder="Address of user" value={address} onChange={(e) => setAddress(e.target.value)} />
-          </Form.Group>         
-           
-
-          <Form.Group as={Col} controlId="formGridMobileNumber">
-            <Form.Label>Mobile Number</Form.Label>
-            <Form.Control type="text" placeholder="Enter mobile number" value={mobileNumber} onChange={(e) => setContactNumber(e.target.value)} />
-          </Form.Group>      
+        <form className="client-creation-form" onSubmit={handleSubmit}>
+          {/* Personal Information Section */}
+          <div className="form-section">
+            <h3 className="section-title">Personal Information</h3>
             
-          <Row className="mb-10">
-            <Form.Group className="mb-10" controlId="formGridEmail">
-              <Form.Label>Email ID</Form.Label>
-              <Form.Control type="email" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                {formErrors.email && <span className="error" style={{ color: 'red', fontSize: 'small' }}>{formErrors.email}</span>}
-            </Form.Group>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Client Name</label>
+                <input
+                  type="text"
+                  value={formData.fullName}
+                  onChange={(e) => handleInputChange('fullName', e.target.value)}
+                  className={formErrors.fullName ? 'error' : ''}
+                  placeholder="Enter client name"
+                />
+                {formErrors.fullName && <span className="error-message">{formErrors.fullName}</span>}
+              </div>
 
-            <Form.Group as={Col} controlId="formGridNIC">
-              <Form.Label>NIC</Form.Label>
-              <Form.Control type="text" placeholder="Enter NIC" value={nic} onChange={(e) => setNIC(e.target.value)} />
-              {formErrors.nic && <span className="error" style={{ color: 'red', fontSize: 'small' }}>{formErrors.nic}</span>}
-            </Form.Group>               
-          </Row>
-
-          <Form.Group as={Col} controlId="formGridClientDescription">
-              <Form.Label>Client Description</Form.Label>
-              <Form.Control type="text" placeholder="Enter Client Description" value={clientDescription} onChange={(e) => setClientDescription(e.target.value)} />
-            </Form.Group>
-        
-          <Row className="mb-10">
-            <Form.Group as={Col} controlId="formGridUserCategory">
-              <Form.Label>User Category</Form.Label>
-              <Form.Control as="select" value={userCategory} onChange={(e) => setUserCategory(e.target.value)}>
-                <option>Select UserCategory</option>
-                <option>4</option>
-              </Form.Control>
-            </Form.Group>
-
-            <Form.Group as={Col} controlId="formGridTotalPayment">
-              <Form.Label>Total Payment</Form.Label>
-              <Form.Control type="text" placeholder="Enter Total Payment" value={totalPayment} onChange={(e) => setTotalPayment(e.target.value)} />
-            </Form.Group>   
-          </Row>
-
-          {formSubmitted && Object.keys(formErrors).length > 0 && (
-            <div className="alert alert-danger" style={{ color: "red" }}>
-              Please fill all fields.
+              <div className="form-group">
+                <label>Username</label>
+                <input
+                  type="text"
+                  value={formData.userName}
+                  onChange={(e) => handleInputChange('userName', e.target.value)}
+                  className={formErrors.userName ? 'error' : ''}
+                  placeholder="Enter username"
+                />
+                {formErrors.userName && <span className="error-message">{formErrors.userName}</span>}
+              </div>
             </div>
-          )}
 
-          <Row className="mb-10">          
-            <Col>
-              <Button variant="primary" onClick={clearForm} id="resetButton">
-                Clear
-              </Button>
-            </Col>
+            <div className="form-row">
+              <div className="form-group">
+                <label>NIC</label>
+                <input
+                  type="text"
+                  value={formData.nic}
+                  onChange={(e) => handleInputChange('nic', e.target.value)}
+                  className={formErrors.nic ? 'error' : ''}
+                  placeholder="Enter 12-digit NIC number"
+                  maxLength="12"
+                />
+                {formErrors.nic && <span className="error-message">{formErrors.nic}</span>}
+              </div>
+
+              <div className="form-group">
+                <label>Mobile Number</label>
+                <input
+                  type="tel"
+                  value={formData.mobileNumber}
+                  onChange={(e) => handleInputChange('mobileNumber', e.target.value)}
+                  className={formErrors.mobileNumber ? 'error' : ''}
+                  placeholder="Enter 10-digit mobile number"
+                  maxLength="10"
+                />
+                {formErrors.mobileNumber && <span className="error-message">{formErrors.mobileNumber}</span>}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                className={formErrors.email ? 'error' : ''}
+                placeholder="Enter email address"
+              />
+              {formErrors.email && <span className="error-message">{formErrors.email}</span>}
+            </div>
+
+            <div className="form-group">
+              <label>Address</label>
+              <textarea
+                value={formData.address}
+                onChange={(e) => handleInputChange('address', e.target.value)}
+                className={formErrors.address ? 'error' : ''}
+                placeholder="Enter complete address"
+                rows="3"
+              />
+              {formErrors.address && <span className="error-message">{formErrors.address}</span>}
+            </div>
+          </div>
+
+          {/* Business Information Section */}
+          <div className="form-section">
+            <h3 className="section-title">Business Information</h3>
             
-            <Col>
-              <Button variant="secondary" type="submit" id="submitButton">
-                Submit
-              </Button>
-            </Col>
-          </Row>
-        </Form>
+            <div className="form-group">
+              <label>Client Description</label>
+              <textarea
+                value={formData.clientDescription}
+                onChange={(e) => handleInputChange('clientDescription', e.target.value)}
+                className={formErrors.clientDescription ? 'error' : ''}
+                placeholder="Describe the client's business or requirements"
+                rows="4"
+              />
+              {formErrors.clientDescription && <span className="error-message">{formErrors.clientDescription}</span>}
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Total Payment</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={formData.totalPayment}
+                  onChange={(e) => handleInputChange('totalPayment', e.target.value)}
+                  className={formErrors.totalPayment ? 'error' : ''}
+                  placeholder="Enter total payment amount"
+                />
+                {formErrors.totalPayment && <span className="error-message">{formErrors.totalPayment}</span>}
+              </div>
+
+              <div className="form-group">
+                <label>User Category</label>
+                <select
+                  value={formData.userCategory}
+                  onChange={(e) => handleInputChange('userCategory', e.target.value)}
+                  disabled
+                >
+                  <option value="CLIENT">CLIENT</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Form Actions */}
+          <div className="form-actions">
+            <button 
+              type="button" 
+              className="btn-secondary"
+              onClick={clearForm}
+              disabled={loading}
+            >
+              Clear Form
+            </button>
+            <button 
+              type="submit" 
+              className="btn-primary"
+              disabled={loading}
+            >
+              {loading ? 'Creating Client...' : 'Create Client'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

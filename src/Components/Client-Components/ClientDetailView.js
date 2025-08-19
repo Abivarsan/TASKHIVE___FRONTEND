@@ -1,8 +1,9 @@
+// ClientDetailView.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import './styles/ClientDetailView.css';
 
 const ClientDetailView = () => {
@@ -16,7 +17,6 @@ const ClientDetailView = () => {
       const response = await axios.get(`http://localhost:5228/api/Client/${clientId}`);
       setUserData(response.data);
     } catch (error) {
-      console.error('Error fetching user data:', error);
       setErrorMessage('Error fetching user data.');
     } finally {
       setLoading(false);
@@ -25,19 +25,15 @@ const ClientDetailView = () => {
 
   useEffect(() => {
     fetchUserData();
+    // eslint-disable-next-line
   }, [clientId]);
 
   const deactivateUser = async () => {
-    const confirmDeactivation = window.confirm("Are you sure you want to deactivate the user?");
-    if (!confirmDeactivation) {
-      return;
-    }
-
+    if (!window.confirm('Are you sure you want to deactivate the user?')) return;
     try {
       await axios.post('http://localhost:5228/api/Client/deactivate-client', { clientId });
-      alert("User deactivated successfully.");
+      alert('User deactivated successfully.');
       setErrorMessage(null);
-      // Refetch the user data
       fetchUserData();
     } catch (error) {
       handleErrorResponse(error, 'deactivating');
@@ -45,16 +41,11 @@ const ClientDetailView = () => {
   };
 
   const reactivateUser = async () => {
-    const confirmReactivation = window.confirm("Are you sure you want to reactivate the user?");
-    if (!confirmReactivation) {
-      return;
-    }
-
+    if (!window.confirm('Are you sure you want to reactivate the user?')) return;
     try {
       await axios.post('http://localhost:5228/api/Client/reactivate-client', { clientId });
-      alert("User reactivated successfully.");
+      alert('User reactivated successfully.');
       setErrorMessage(null);
-      // Refetch the user data
       fetchUserData();
     } catch (error) {
       handleErrorResponse(error, 'reactivating');
@@ -62,87 +53,119 @@ const ClientDetailView = () => {
   };
 
   const handleErrorResponse = (error, action) => {
-    if (error.response && error.response.data && error.response.data.message) {
+    if (error.response?.data?.message) {
       setErrorMessage(error.response.data.message);
-      window.alert(error.response.data.message);  // Display error message as a popup
+      window.alert(error.response.data.message);
     } else {
-      const genericErrorMessage = `Error ${action} user.`;
-      setErrorMessage(genericErrorMessage);
-      window.alert(genericErrorMessage);  // Display generic error message as a popup
+      setErrorMessage(`Error ${action} user.`);
+      window.alert(`Error ${action} user.`);
     }
-    console.error(`Error ${action} user:`, error);
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="detail-loading-container">
+        <div className="detail-loading-spinner"></div>
+        <div className="detail-loading-text">Loading client details…</div>
+      </div>
+    );
   }
 
   if (errorMessage) {
-    return <div>{errorMessage}</div>;
+    return (
+      <div className="client-detail-card error">
+        <div className="client-detail-header">
+          <Link to="/clientlist" className="back-link">
+            <FontAwesomeIcon icon={faChevronLeft} /> Back to Client List
+          </Link>
+          <h2>Client Details</h2>
+        </div>
+        <div className="detail-alert">{errorMessage}</div>
+      </div>
+    );
   }
 
   if (!userData) {
-    return <div>User data not found.</div>;
+    return null;
   }
 
   return (
-    <div className="profile-container">
-      {/* Profile Icon */}
-      <div className="profile-icon">
-        <FontAwesomeIcon icon={faUser} size="5x" color="#000000" />
+    <div className="client-detail-card">
+      <div className="client-detail-header">
+        <Link to="/clientlist" className="back-link">
+          <FontAwesomeIcon icon={faChevronLeft} /> Back to Client List
+        </Link>
+        <h2>
+          <FontAwesomeIcon icon={faUser} className="client-profile-icon" />
+          Client Details
+        </h2>
       </div>
-
-      <div className="profile-details">
-        <table className="user-details-table">
-          <tbody>
-            <tr>
-              <td className="label"><strong>Client ID:</strong></td>
-              <td className="value">{userData.clientId}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Username:</strong></td>
-              <td className="value">{userData.userName}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Client FullName:</strong></td>
-              <td className="value">{userData.clientName} {userData.lastName}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Email:</strong></td>
-              <td className="value">{userData.email}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Mobile number:</strong></td>
-              <td className="value">{userData.contactNumber}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Address:</strong></td>
-              <td className="value">{userData.address}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>NIC:</strong></td>
-              <td className="value">{userData.nic}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Client Description:</strong></td>
-              <td className="value">{userData.clientDescription}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>Total payment:</strong></td>
-              <td className="value">{userData.totalPayment}</td>
-            </tr>
-            <tr>
-              <td className="label"><strong>IsActive:</strong></td>
-              <td className="value">{userData.isActive ? "Yes" : "No"}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div className="client-detail-main-info">
+        <div className="client-photo-wrap">
+          <div className="client-photo-placeholder">
+            {userData.clientName ? userData.clientName[0].toUpperCase() : userData.userName.toUpperCase()}
+          </div>
+        </div>
+        <div className="client-main-names">
+          <div className="client-title">{userData.clientName} {userData.lastName}</div>
+          <div className="client-username">@{userData.userName}</div>
+        </div>
       </div>
-
-      <div className="bottom-buttons">
-        <Link to="/clientList" className="btn btn-secondary">Back</Link>
-        <button className="btn btn-danger" onClick={deactivateUser}>Deactivate</button>
-        <button className="btn btn-success" onClick={reactivateUser}>Reactivate</button>
+      <table className="client-detail-table">
+        <tbody>
+          <tr>
+            <td className="label">Client ID</td>
+            <td className="value">#{userData.clientId}</td>
+          </tr>
+          <tr>
+            <td className="label">Email</td>
+            <td className="value">{userData.email}</td>
+          </tr>
+          <tr>
+            <td className="label">Mobile Number</td>
+            <td className="value">{userData.contactNumber}</td>
+          </tr>
+          <tr>
+            <td className="label">Address</td>
+            <td className="value">{userData.address}</td>
+          </tr>
+          <tr>
+            <td className="label">NIC</td>
+            <td className="value">{userData.nic}</td>
+          </tr>
+          <tr>
+            <td className="label">Client Description</td>
+            <td className="value">{userData.clientDescription}</td>
+          </tr>
+          <tr>
+            <td className="label">Total Payment</td>
+            <td className="value">₹{userData.totalPayment}</td>
+          </tr>
+          <tr>
+            <td className="label">Is Active</td>
+            <td className="value">
+              {userData.isActive ? (
+                <span className="badge badge-active">Active</span>
+              ) : (
+                <span className="badge badge-inactive">Inactive</span>
+              )}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div className="client-detail-btn-row">
+        {userData.isActive ? (
+          <button className="detail-btn btn-danger" onClick={deactivateUser}>
+            Deactivate
+          </button>
+        ) : (
+          <button className="detail-btn btn-success" onClick={reactivateUser}>
+            Reactivate
+          </button>
+        )}
+        <Link to="/clientlist" className="detail-btn btn-secondary">
+          Close
+        </Link>
       </div>
     </div>
   );

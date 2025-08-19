@@ -115,9 +115,9 @@ const UserDetailView = () => {
     <div className="profile-container">
       {/* Header Section */}
       <div className="profile-header">
-        {userData.imageSrc ? (
+        {userData.profileImageUrl ? (
           <img
-            src={userData.imageSrc}
+            src={userData.profileImageUrl}
             alt="Profile"
             className="profile-image"
           />

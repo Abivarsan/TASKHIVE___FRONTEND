@@ -45,7 +45,7 @@
 .section-title {
   font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: black;
   margin-bottom: 24px;
   padding-bottom: 8px;
   border-bottom: 2px solid #1976d2;
@@ -72,7 +72,7 @@
 /* Labels */
 .form-group label {
   font-weight: 500;
-  color: #333;
+  color:black;
   margin-bottom: 8px;
   font-size: 14px;
 }
@@ -88,7 +88,10 @@
   transition: all 0.3s ease;
   background: white;
   font-family: inherit;
+  color: #000; /* Normal text color (black) */
 }
+
+
 
 .form-group input:focus,
 .form-group select:focus,
@@ -96,6 +99,17 @@
   outline: none;
   border-color: #1976d2;
   box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+  color: #000; /* Change text to theme blue */
+}
+
+.form-group input:not(:focus) {
+  color: #000; /* Back to black */
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #000;
+  opacity: 1; /* Ensures consistent color across browsers */
 }
 
 .form-group input:hover,
@@ -161,7 +175,7 @@
 
 .progress-text {
   font-size: 12px;
-  color: #666;
+  color: black;
   text-align: center;
 }
 
