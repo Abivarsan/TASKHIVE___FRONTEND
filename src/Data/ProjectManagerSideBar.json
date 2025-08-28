@@ -5,17 +5,27 @@
         "path" :"/ProjectManagerDashboard",
         "roles" : ["2"]
     },
+   
     {
-        "title": "Project List",
+        "title": "Projects",
         "icon": "bi bi-stack",
-        "path" :"/PMprojectListPage",
-        "roles":["1","2"]
+        "childrens": [
+            {
+                "title": "Project List",
+                "path": "/PMprojectListPage"
+                
+            },
+            {
+                "title": "Create Project",
+                "path":"/projectcreation"
+            }
+        ]
     },
 
        {
            "title": "User Accounts",
-           "path": "/userList",
-           "icon": "bi-person-fill",
-           "roles": ["1", "2"]
+           "path": "/PMuserListPage",
+           "icon": "bi-person-fill"
+        
        }
 ]

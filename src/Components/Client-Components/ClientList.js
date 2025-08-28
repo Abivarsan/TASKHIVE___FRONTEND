@@ -82,7 +82,7 @@ export default function ClientList() {
               <tr>
                 <th>Client ID</th>
                 <th>Username</th>
-                <th>Full Name</th>
+                <th>Client Name</th>
                 <th>Email</th>
                 <th>Actions</th>
               </tr>
@@ -92,7 +92,7 @@ export default function ClientList() {
                 <tr key={c.clientId}>
                   <td>#{c.clientId}</td>
                   <td>{c.userName}</td>
-                  <td>{c.clientName?? "-"}</td> 
+                  <td>{c.clientName}</td> 
                   <td>{c.email}</td>
                   <td>
                     <button

@@ -11,7 +11,7 @@ emailjs.init('WcuGZ2ivU-n9OBxuF');
 export default function ClientCreationForm() {
   // Form state
   const [formData, setFormData] = useState({
-    fullName: '',
+    clientName: '',
     userName: '',
     address: '',
     nic: '',
@@ -52,7 +52,7 @@ export default function ClientCreationForm() {
     let isValid = true;
 
     // Check required fields
-    const requiredFields = ['fullName', 'userName', 'address', 'nic', 'mobileNumber', 'email', 'clientDescription', 'totalPayment'];
+    const requiredFields = ['clientName', 'userName', 'address', 'nic', 'mobileNumber', 'email', 'clientDescription', 'totalPayment'];
     
     requiredFields.forEach(field => {
       if (!formData[field] || !formData[field].toString().trim()) {
@@ -104,7 +104,7 @@ export default function ClientCreationForm() {
     setLoading(true);
 
     const data = {
-      ClientName: formData.fullName,
+      ClientName: formData.clientName,
       UserName: formData.userName,
       Address: formData.address,
       NIC: formData.nic,
@@ -168,7 +168,7 @@ export default function ClientCreationForm() {
   // Clear form
   const clearForm = () => {
     setFormData({
-      fullName: '',
+      clientName: '',
       userName: '',
       address: '',
       nic: '',
@@ -197,12 +197,12 @@ export default function ClientCreationForm() {
                 <label>Client Name</label>
                 <input
                   type="text"
-                  value={formData.fullName}
-                  onChange={(e) => handleInputChange('fullName', e.target.value)}
-                  className={formErrors.fullName ? 'error' : ''}
+                  value={formData.clientName}
+                  onChange={(e) => handleInputChange('clientName', e.target.value)}
+                  className={formErrors.clientName ? 'error' : ''}
                   placeholder="Enter client name"
                 />
-                {formErrors.fullName && <span className="error-message">{formErrors.fullName}</span>}
+                {formErrors.clientName && <span className="error-message">{formErrors.clientName}</span>}
               </div>
 
               <div className="form-group">

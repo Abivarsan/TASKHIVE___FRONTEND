@@ -1,23 +1,18 @@
-import React from 'react'
 import Topbar from '../../../Components/Common-Components/Topbar'
 import ProjectManagerSidebar from '../../../Components/Project-Components/ProjectManagerSidebar'
-import PMprojectListCom from '../../../Components/Project-Components/Project-Manger-Components/PMprojectListCom'
+import PMUserList from '../../../Components/Project-Components/Project-Manger-Components/PMuserListCom'
 
-
-export default function PMprojectListPage() {
+export default function PMUserListPage() {
   return (
     <div>
         <div className="FullPage">
         
         <Topbar />
         <ProjectManagerSidebar />
-        <div className="Content">
-            
-          
-            
+        <div className="Content">  
             <div>
               {/* content */}
-              <PMprojectListCom />
+              <PMUserList />
              
             </div>
             

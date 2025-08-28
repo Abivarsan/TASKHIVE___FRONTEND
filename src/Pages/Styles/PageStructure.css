@@ -14,6 +14,14 @@ html, body {
   overflow-x: hidden;
 }
 
+.Content h1 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #1976d2;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+}
+
 /* Full-page wrapper */
 .FullPage {
   display: flex;

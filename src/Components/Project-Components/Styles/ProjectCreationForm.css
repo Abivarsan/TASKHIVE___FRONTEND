@@ -24,6 +24,7 @@
 .form-header p {
   color: #666;
   font-size: 16px;
+  font-weight: bold;
 }
 
 /* Form Container */
@@ -38,16 +39,17 @@
 .form-section {
   padding: 32px;
   border-bottom: 1px solid #e0e0e0;
+  
 }
 
 .form-section:last-of-type {
   border-bottom: none;
 }
 
-.section-title {
+.project-form .section-title {
   font-size: 20px;
   font-weight: 600;
-  color: #333;
+   color: #1976d2; 
   margin-bottom: 24px;
   padding-bottom: 8px;
   border-bottom: 2px solid #1976d2;
@@ -269,4 +271,22 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ReactQuill editor custom styles */
+.ql-container {
+  min-height: 200px;  /* Increase height of the editor */
+}
+
+.ql-editor {
+  min-height: 200px;       /* Ensure content area is taller */
+  color: #333333;          /* Text color */
+  font-size: 16px;          /* Optional: font size */
+  line-height: 1.5;         /* Optional: improve readability */
+}
+
+/* Placeholder color */
+.ql-editor.ql-blank::before {
+  color: #999999;
+  font-style: italic;
 }

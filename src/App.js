@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import ProtectedRoute from './Auth/ProtectedRoute';
 import { AuthProvider } from './Auth/AuthContext';
 import AdminDashboard from "./Pages/Admin/AdminDashboard";
-import ProjectCreation from "./Pages/Project/ProjectCreation";
+import ProjectCreation from "./Pages/Project/Project-Manager/ProjectCreation";
 import ProjectList from "./Pages/Project/ProjectList";
 import TaskCreation from "./Pages/Project/TaskCreation";
 // import ClientList from "./Pages-Hemal/ClientList";
@@ -52,7 +52,7 @@ import PMFullTaskViewPage from "./Pages/Project/Project-Manager/PMFullTaskViewPa
 import UpdateProjectPage from "./Pages/Project/UpdateProjectPage";
 import UpdateTaskPage from "./Pages/Project/UpdateTaskPage";
 import EditProfile from "./Pages/Admin/EditProfile";
-
+import PMUserListPage from "./Pages/Project/Project-Manager/PMuserListpage";
 
 
 
@@ -92,6 +92,8 @@ function App() {
 
         <Route element={<ProtectedRoute allowedRoles={['2']} />}>
               <Route path="/ProjectManagerDashboard" element={<ProjectManagerDashboard/>}/>
+               <Route path="/PMuserListPage" element={<PMUserListPage/>}/>
+               
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['3']} />}>

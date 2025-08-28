@@ -1,8 +1,11 @@
 // ProjectCreationForm.js
 import React, { useEffect, useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import axios from "axios";
-import { getLoggedUserId } from '../../Auth/ApiService';
-import './Styles/ProjectCreationForm.css';
+import { getLoggedUserId } from '../../../Auth/ApiService';
+import '../Styles/ProjectCreationForm.css';
+
 
 export default function ProjectCreationForm() {
   // State variables
@@ -24,8 +27,6 @@ export default function ProjectCreationForm() {
   // Data for dropdowns
   const [projectManagers, setProjectManagers] = useState([]);
   const [clients, setClients] = useState([]);
-
-  const loggedAdminId = 1;
 
   // Fetch project managers
   const getProjectManagers = async () => {
@@ -72,16 +73,14 @@ export default function ProjectCreationForm() {
   }, [startDate, dueDate]);
 
   // Send email notification
-  const sendEmail = async () => {
-    const urlEmail = `http://localhost:5228/api/EmailSend?adminId=${loggedAdminId}&PmId=${projectManagerID}&projectName=${projectName}`;
-    if (window.confirm('Do you want to send a notification email?')) {
-      try {
-        await axios.post(urlEmail, []);
-        alert("Email sent successfully");
-      } catch (error) {
-        console.error("Email sending failed:", error);
-        alert("Failed to send email notification");
-      }
+  const sendEmail = async (projectId, clientId, projectName) => {
+    const urlEmail = `http://localhost:5228/api/EmailSend?projectId=${projectId}&clientId=${clientId}&projectName=${projectName}`;
+    try {
+      await axios.post(urlEmail, {});
+      alert("Email notification sent!");
+    } catch (error) {
+      console.error("Email sending failed:", error);
+      alert("Failed to send email notification");
     }
   };
 
@@ -138,10 +137,14 @@ export default function ProjectCreationForm() {
       };
 
       const url = `http://localhost:5228/api/CreateProject?id=${userId}`;
-      await axios.post(url, data);
-      
+      const response =await axios.post(url, data);
+
+      const createdProject = response.data; // backend should return projectId + clientId etc.
       alert("Project created successfully!");
-      await sendEmail();
+
+      
+   await sendEmail(createdProject.projectId, createdProject.clientId, createdProject.projectName);
+
       
       // Reset form
       setProjectName("");
@@ -207,27 +210,23 @@ export default function ProjectCreationForm() {
 
           <div className="form-group">
             <label htmlFor="description">Project Description *</label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className={errors.description ? "error" : ""}
-              placeholder="Describe the project..."
-              rows="4"
-            />
+             <ReactQuill
+          theme="snow"
+          value={description}
+          onChange={setDescription}
+          placeholder="Write a detailed project description..."
+        />
             {errors.description && <span className="error-message">{errors.description}</span>}
           </div>
 
           <div className="form-group">
             <label htmlFor="objectives">Objectives *</label>
-            <textarea
-              id="objectives"
-              value={objectives}
-              onChange={(e) => setObjectives(e.target.value)}
-              className={errors.objectives ? "error" : ""}
-              placeholder="List the project objectives..."
-              rows="3"
-            />
+            <ReactQuill
+          theme="snow"
+          value={objectives}
+          onChange={setObjectives}
+          placeholder="List project objectives..."
+        />
             {errors.objectives && <span className="error-message">{errors.objectives}</span>}
           </div>
         </div>
