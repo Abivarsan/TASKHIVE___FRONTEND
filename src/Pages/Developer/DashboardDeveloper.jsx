@@ -13,7 +13,7 @@ function DashboardDeveloper() {
       <DeveloperSidebar/>
 
       <div className="Content">
-      <Header/>
+      {/* <Header/> */}
    
      <Content/>
         </div>

@@ -1,661 +1,614 @@
+// TaskDetailsCom.jsx - Modern Material UI Design
 import React, { useEffect, useState } from "react";
-
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
-import "../Admin-Components/styles/AdminProjectViewCSS.css";
-import "./Styles/FormStyle.css";
-import "./Styles/ProjectListCSS.css";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-
-import Button from "react-bootstrap/Button";
-import "./Styles/DataView.css";
-
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
-
-import DeleteIcon from '@mui/icons-material/Delete';
-
+import "./Styles/TaskDetailsCom.css";
 
 export default function TaskDetailsCom() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Basic task data
+  const [taskData, setTaskData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState(0);
 
-    const location = useLocation();
+  // File states
+  const [taskInfo, setTaskInfo] = useState(null);
+  const [img, setImg] = useState(null);
+  const [audio, setAudio] = useState(null);
+  const [zip, setZip] = useState(null);
 
-
-    ///***********Get basic details******* */
-    const [data, setData] = useState([]);
-    const selectedTaskId = location.state.selectedTaskId;
-    const proId = location.state.ProId;
-
-    const GetTaskDetails = async () => {
-        const url = `http://localhost:5228/api/TaskDetailsView?Tid=${selectedTaskId}`;
-        try {
-            const response = await axios.get(url);
-            setData(response.data);
-
-            console.log(data);
-        } catch (error) {
-            console.log(error + "****");
-        }
-    }
-
-    //------------- Upload task info files ---------------------
-
-    const [taskInfo, setTaskInfo] = useState("");
-
-    const HandleTaskInfoChange = (event) => {
-      setTaskInfo(event.target.files[0]);
-      console.log("Task info selected");
-     
-     
-    }
-
-    const UploadTaskInfo = async () => {
-      if(!taskInfo){
-        alert("select a file");
-        return;
-      }
-
-      const formData = new FormData();
-    formData.append("file", taskInfo);
-
-    const url1 = `http://localhost:5228/api/TaskInfoUpload/ZipUpload?ProID=${proId}&TId=${selectedTaskId}`;
-
-    axios.post(url1, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        },
-      }).then(() => {
-        alert("Upload Successful");
-        setTaskInfo(null);
-      })
-     .catch ((error) => {
-      alert(error + " ***");
-      console.error("Error uploading file:", error);
-    });
-    }
-
-    //------view task info
-
+  // File lists
   const [basicNames, setBasicNames] = useState([]);
-
-  const GetBasicFileNames = async () => {
-    const urlGetBasic = `http://localhost:5228/api/TaskFilesView/TaskInfo?PId=${proId}&TId=${selectedTaskId}`;
-
-    try {
-      const response = await axios.get(urlGetBasic);
-      setBasicNames(response.data);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-    
-
-
-
-    // ---------------Upload Images --------------------------------
-
-    const [img, setImg] = useState("");
-
-    const HandleImgChange = (event) => {
-      setImg(event.target.files[0]);
-      console.log("Image selected");
-    }
-
-    const UploadImg = async () => {
-      if(!img){
-        alert("select an Image");
-        return;
-      }
-
-      const formData = new FormData();
-    formData.append("file", img);
-
-    const url1 = `http://localhost:5228/api/TaskImageUpload/ImgUpload?ProID=${proId}&TId=${selectedTaskId}`;
-
-    axios.post(url1, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        },
-      }).then(() => {
-        alert("Upload Successful");
-        setImg(null);
-      })
-     .catch ((error) => {
-      alert("Select an Image");
-      console.error("Error uploading file:", error);
-    });
-    }
-
-
-    //------view Image info
-
   const [imgNames, setImgNames] = useState([]);
-
-  const GetImgNames = async () => {
-    const url = `http://localhost:5228/api/TaskFilesView/Images?PId=${proId}&TId=${selectedTaskId}`;
-
-    try {
-      const response = await axios.get(url);
-      setImgNames(response.data);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-
-
-        // ---------------Upload Audio --------------------------------
-
-        const [audio, setAudio] = useState("");
-
-        const HandleAudioChange = (event) => {
-          setAudio(event.target.files[0]);
-          console.log("Audio selected");
-        }
-    
-        const UploadAudio = async () => {
-          if(!audio){
-            alert("select an Audio");
-            return;
-          }
-    
-          const formData = new FormData();
-        formData.append("file", audio);
-
-        const url1 = `http://localhost:5228/api/TaskAudioUpload/AudioUpload?ProID=${proId}&TId=${selectedTaskId}`;
-
-          axios.post(url1, formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }).then(() => {
-            alert("Upload Successful");
-            setAudio(null);
-          })
-         .catch ((error) => {
-          //alert(error);
-          alert("Select an Audio");
-          console.error("Error uploading file:", error);
-        });
-        }
-
-
-          //------view Audio info
-
   const [audioNames, setAudioNames] = useState([]);
-
-  const GetAudioNames = async () => {
-    const url = `http://localhost:5228/api/TaskFilesView/audio?PId=${proId}&TId=${selectedTaskId}`;
-
-    try {
-      const response = await axios.get(url);
-      setAudioNames(response.data);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-
-
-
-            // ---------------Upload Video --------------------------------
-
-    // const [video, setVideo] = useState("");
-
-    // const HandleVideoChange = (event) => {
-    //   setVideo(event.target.files[0]);
-    //   console.log("Video selected");
-    // }
-
-  //   const UploadVideo = async () => {
-  //     if(!video){
-  //       alert("select an Video");
-  //       return;
-  //     }
-
-  //     const formData = new FormData();
-  //   formData.append("file", video);
-
-  //   const url1 = `https://localhost:44339/api/TaskVideoUpload/VideoUpload?ProID=${proId}TId=${selectedTaskId}`;
-
-    
-  //     axios.post(url1, formData, {
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //     }).then(() => {
-  //       alert("Upload Successful");
-  //       setVideo(null);
-  //     })
-  //    .catch ((error) => {
-  //     alert("Select an Video");
-  //     console.error("Error uploading file:", error);
-  //   });
-  //   }
-
-
-  //   //------view video info
-
-  // const [videoNames, setVideoNames] = useState([]);
-
-  // const GetVideoNames = async () => {
-  //   const url = `https://localhost:44339/api/TaskFilesView/video?PId=${proId}&TId=${selectedTaskId}`;
-
-  //   try {
-  //     const response = await axios.get(url);
-  //     setVideoNames(response.data);
-  //     console.log(response.data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-
-
-        // ---------------Upload Zip files --------------------------------
-
-        const [zip, setZip] = useState("");
-
-        const HandleZipChange = (event) => {
-          setZip(event.target.files[0]);
-          console.log("Zip file selected");
-        }
-    
-        const UploadZip = async () => {
-          if(!zip){
-            alert("select an Zip file");
-            return;
-          }
-    
-          const formData = new FormData();
-        formData.append("file", zip);
-
-        const url1 = `http://localhost:5228/api/TaskZipUpload/ZipUpload?ProID=${proId}&TId=${selectedTaskId}`;
-
-
-          axios.post(url1, formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }).then(() => {
-            alert("Upload Successful");
-            setZip(null);
-          })
-         .catch ((error) => {
-          alert("Select an Zip file");
-          console.error("Error uploading file:", error);
-        });
-        }
-
-        //------view Zip info
-
   const [zipNames, setZipNames] = useState([]);
 
-  const GetZipNames = async () => {
-    const url = `http://localhost:5228/api/TaskFilesView/zip?PId=${proId}&TId=${selectedTaskId}`;
+  // Upload states
+  const [uploading, setUploading] = useState({
+    taskInfo: false,
+    img: false,
+    audio: false,
+    zip: false
+  });
+
+  const selectedTaskId = location.state?.selectedTaskId;
+  const proId = location.state?.ProId;
+
+  // Get task details
+  const getTaskDetails = async () => {
+    if (!selectedTaskId) {
+      setError("Task ID is missing");
+      setLoading(false);
+      return;
+    }
 
     try {
+      setLoading(true);
+      setError(null);
+      
+      const url = `http://localhost:5228/api/TaskDetailsView?Tid=${selectedTaskId}`;
       const response = await axios.get(url);
-      setZipNames(response.data);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
+      
+      setTaskData(response.data);
+      console.log("Task details loaded:", response.data);
+    } catch (err) {
+      console.error("Error fetching task details:", err);
+      setError("Failed to load task details. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Get file names for different categories
+  const getBasicFileNames = async () => {
+    try {
+      const url = `http://localhost:5228/api/TaskFilesView/TaskInfo?PId=${proId}&TId=${selectedTaskId}`;
+      const response = await axios.get(url);
+      setBasicNames(response.data);
+    } catch (error) {
+      console.error("Error fetching task info files:", error);
+    }
+  };
 
-  //----------------------Download Task Files ---------------------------******
+  const getImgNames = async () => {
+    try {
+      const url = `http://localhost:5228/api/TaskFilesView/Images?PId=${proId}&TId=${selectedTaskId}`;
+      const response = await axios.get(url);
+      setImgNames(response.data);
+    } catch (error) {
+      console.error("Error fetching image files:", error);
+    }
+  };
 
-  const download = async (filePath, fileName) => {
-    const urlDownload = `http://localhost:5228/api/ProjectFileDownload/DownloadProjectFile?FilePath=${filePath}&FileName=${fileName}`;
+  const getAudioNames = async () => {
+    try {
+      const url = `http://localhost:5228/api/TaskFilesView/audio?PId=${proId}&TId=${selectedTaskId}`;
+      const response = await axios.get(url);
+      setAudioNames(response.data);
+    } catch (error) {
+      console.error("Error fetching audio files:", error);
+    }
+  };
 
+  const getZipNames = async () => {
+    try {
+      const url = `http://localhost:5228/api/TaskFilesView/zip?PId=${proId}&TId=${selectedTaskId}`;
+      const response = await axios.get(url);
+      setZipNames(response.data);
+    } catch (error) {
+      console.error("Error fetching zip files:", error);
+    }
+  };
+
+  // Upload functions
+  const uploadFile = async (file, uploadType, apiEndpoint) => {
+    if (!file) {
+      alert(`Please select a ${uploadType} file`);
+      return;
+    }
+
+    setUploading(prev => ({ ...prev, [uploadType]: true }));
 
     try {
-      // const response = await axios.get(url2);
-      // console.log(response)
-      if (window.confirm('Do you want to download this item?')){
-        const response = await axios.get(urlDownload, {
-          responseType: 'blob' 
-        });
-        console.log("downloaded");
+      const formData = new FormData();
+      formData.append("file", file);
+      
+      const url = `${apiEndpoint}?ProID=${proId}&TId=${selectedTaskId}`;
+      
+      await axios.post(url, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      
+      alert("Upload successful!");
+      
+      // Reset file state and refresh file list
+      switch(uploadType) {
+        case 'taskInfo':
+          setTaskInfo(null);
+          getBasicFileNames();
+          break;
+        case 'img':
+          setImg(null);
+          getImgNames();
+          break;
+        case 'audio':
+          setAudio(null);
+          getAudioNames();
+          break;
+        case 'zip':
+          setZip(null);
+          getZipNames();
+          break;
+      }
+      
+      // Reset file input
+      const fileInput = document.querySelector(`input[data-upload-type="${uploadType}"]`);
+      if (fileInput) fileInput.value = '';
+      
+    } catch (error) {
+      console.error(`Error uploading ${uploadType}:`, error);
+      alert(`Failed to upload ${uploadType}. Please try again.`);
+    } finally {
+      setUploading(prev => ({ ...prev, [uploadType]: false }));
+    }
+  };
+
+  // Download file
+  const downloadFile = async (filePath, fileName) => {
+    if (window.confirm('Do you want to download this file?')) {
+      try {
+        const url = `http://localhost:5228/api/ProjectFileDownload/DownloadProjectFile?FilePath=${filePath}&FileName=${fileName}`;
+        const response = await axios.get(url, { responseType: 'blob' });
+        
         const blob = new Blob([response.data], { type: response.data.type });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = fileName;
         link.click();
-        alert("Downloaded");
+        
+        alert("Download completed!");
+      } catch (error) {
+        console.error("Download failed:", error);
+        alert("Download failed. Please try again.");
       }
-      else{
-        console.log("Not download");
+    }
+  };
+
+  // Delete file
+  const deleteFile = async (fileId, refreshFunction) => {
+    if (window.confirm("Are you sure you want to delete this file?")) {
+      try {
+        const url = `http://localhost:5228/api/TaskFileDelete/deleteFile?fileId=${fileId}`;
+        await axios.delete(url);
+        
+        alert("File deleted successfully!");
+        refreshFunction(); // Refresh the file list
+      } catch (error) {
+        console.error("Delete failed:", error);
+        alert("Failed to delete file. Please try again.");
       }
-      
-
-
-    } catch (error) {
-      console.log(error);  
     }
-  }
+  };
 
-
-
-  //-----------------------------
-
-  const navigate = useNavigate();
-
-  // const ClickUpdate = () => {
-  //   if (window.confirm("Do you want to update task details?")) {
-  //     navigate("/UpdateTaskPage", { state: { selectedTaskId } });
-  //   }
-  // };
-
-  const DeleteFile = async (id) => {
-    if (window.confirm("Do you want to Delete item?")){
-    const url = `http://localhost:5228/api/TaskFileDelete/deleteFile?fileId=${id}`;
-
-    try{
-      await axios.delete(url);
-      alert("File Deleted");
-    }
-    catch(error){
-      alert(error);
-
-    }
-  }
-}
-  
-
-
-
-//  *******************task deletion
-
-  const DeleteTask = async () => {
-    try{
-      const url = `http://localhost:5228/api/TaskDeletion?TId=${selectedTaskId}`;       
-
-      if (window.confirm('Are you sure you want to delete the task?')) {
+  // Delete task
+  const deleteTask = async () => {
+    if (window.confirm('Are you sure you want to delete this task?')) {
+      try {
+        const url = `http://localhost:5228/api/TaskDeletion?TId=${selectedTaskId}`;
         const response = await axios.delete(url);
-        if(response.status === 204){
-          alert("Deleted successfully");
+        
+        if (response.status === 204) {
+          alert("Task deleted successfully!");
           navigate(-1);
+        } else if (response.status === 200) {
+          alert("Task is ongoing and cannot be deleted.");
         }
-        else if(response.status === 200){
-          alert("Task is Ongoing");
-        }
-        
-      } else {
-        console.log('Deletion cancelled');
+      } catch (error) {
+        console.error("Delete task failed:", error);
+        alert("Please delete all uploaded resources first.");
       }
-      
     }
-    catch(error){
-      alert("Please Delete All Uploaded Resources");
-      console.log(error);
-    }
-  }
+  };
 
-  const DeleteFiles = async () => {
-  try{
-    const url2 = `http://localhost:5228/api/TaskFileDelete?id=${selectedTaskId}`;     // file delete related to task
-
+  // Delete all files
+  const deleteAllFiles = async () => {
     if (window.confirm('Are you sure you want to delete all uploaded files?')) {
-      const deletedFile = await axios.delete(url2);
-        if(deletedFile.status !== 204){
-          alert("Error Occured");
-          return;
+      try {
+        const url = `http://localhost:5228/api/TaskFileDelete?id=${selectedTaskId}`;
+        const response = await axios.delete(url);
+        
+        if (response.status === 204) {
+          alert("All files deleted successfully!");
+          // Refresh all file lists
+          getBasicFileNames();
+          getImgNames();
+          getAudioNames();
+          getZipNames();
+        } else {
+          alert("Error occurred while deleting files.");
         }
+      } catch (error) {
+        console.error("Delete all files failed:", error);
+        alert("Failed to delete files. Please try again.");
+      }
     }
-  } catch(error){
-    alert(error);
-  }   
+  };
+
+  // Handle back navigation
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  // Get priority badge class
+  const getPriorityBadge = (priority) => {
+    const priorityLower = priority?.toLowerCase();
+    if (priorityLower === 'low') return 'priority-low';
+    if (priorityLower === 'medium') return 'priority-medium';
+    if (priorityLower === 'high') return 'priority-high';
+    if (priorityLower === 'critical') return 'priority-critical';
+    return 'priority-default';
+  };
+
+  // Initialize data
+  useEffect(() => {
+    if (selectedTaskId && proId) {
+      getTaskDetails();
+      getBasicFileNames();
+      getImgNames();
+      getAudioNames();
+      getZipNames();
+    }
+  }, [selectedTaskId, proId]);
+
+  if (loading) {
+    return (
+      <div className="task-details-container">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <div className="loading-text">Loading task details...</div>
+        </div>
+      </div>
+    );
   }
 
-  
-
-    useEffect(() => {
-        GetTaskDetails();
-        GetBasicFileNames();
-        GetImgNames();
-        GetAudioNames();
-        GetZipNames();
-    },[basicNames, imgNames, audioNames, zipNames]);
-
-
-
-    
-  return (
-    <div className="Section">
-      <Tabs defaultActiveKey="home" id="fill-tab-example" className="mb-3" fill>
-        <Tab eventKey="home" title="Task Info">
-          
-            {data.map((task , index) => (
-                <div className="project-detail">
-                <h3 className="card-topic">{task.taskName}</h3>
-                <p className="ViewItems">Task Id: {task.taskId}</p>
-                <p className="ViewItems">Task Description: {task.taskDescription}</p>
-                <p className="ViewItems">Technologies: {task.technologies}</p>
-                <p className="ViewItems">Start Date: {task.createdDate.split("T")[0]}</p>
-                <p className="ViewItems">Due Date: {task.dueDate.split("T")[0]}</p>
-                <p className="ViewItems">Time Duration: {task.timeDuration} days</p>
-                <p className="ViewItems">Priority: {task.priority}</p>
-                <p className="ViewItems">Dependancies: {task.dependancies}</p>
-                <p className="ViewItems">Task status: {task.taskStatus}</p>
-               
-              </div>
-
-
-            ))}<br/>
-
-            <div style={{display: "flex"}}>
-            <Button variant="danger" onClick={DeleteTask}>Delete Task</Button>
-            {/* <Button onClick={ClickUpdate}>Update Task</Button> */}
+  if (error) {
+    return (
+      <div className="task-details-container">
+        <div className="error-container">
+          <div className="error-icon">⚠️</div>
+          <div className="error-message">{error}</div>
+          <button className="back-btn-error" onClick={handleBack}>
+            Go Back
+          </button>
         </div>
-          
-        </Tab>
+      </div>
+    );
+  }
 
-        <Tab eventKey="resources" title="Resources">
-        <div className="project-detail">
-        <h3 className="card-topic">Task Information</h3>
-        
-            <Form.Group as={Col} className="mb-3">
-            <div className="ViewItems">
-              <Form.Label>Task Info Files: </Form.Label>
-              <div style={{ display: "flex" }}>
-                <Form.Control
-                  type="file"
-                  size="sm"
-                  style={{ width: "250px" }}
-                  onChange={HandleTaskInfoChange}
-                />
-                <Button
-                  onClick={UploadTaskInfo}
-                  style={{ marginLeft: "60px", marginBottom: "4px" }}
-                >
-                  Upload
-                </Button>
+  return (
+    <div className="task-details-container">
+      {/* Header */}
+      <div className="task-details-header">
+        <button className="back-btn" onClick={handleBack}>
+          ← Back
+        </button>
+        <h1 className="task-details-title">Task Details</h1>
+        <p className="task-details-subtitle">
+          Task ID: #{selectedTaskId} • Project ID: #{proId}
+        </p>
+      </div>
 
+      {/* Task Information Card */}
+      {taskData.map((task) => (
+        <div key={task.taskId} className="task-info-card">
+          <div className="task-info-header">
+            <h2 className="task-name">{task.taskName || 'Untitled Task'}</h2>
+            <span className={`priority-badge ${getPriorityBadge(task.priority)}`}>
+              {task.priority}
+            </span>
+          </div>
+
+          <div className="task-info-grid">
+            <div className="info-item">
+              <label>Task ID</label>
+              <span>#{task.taskId}</span>
+            </div>
+            <div className="info-item">
+              <label>Priority</label>
+              <span className={`priority-text ${getPriorityBadge(task.priority)}`}>
+                {task.priority}
+              </span>
+            </div>
+            <div className="info-item">
+              <label>Start Date</label>
+              <span>{task.createdDate?.split("T")[0]}</span>
+            </div>
+            <div className="info-item">
+              <label>Due Date</label>
+              <span>{task.dueDate?.split("T")[0]}</span>
+            </div>
+            <div className="info-item">
+              <label>Duration</label>
+              <span>{task.timeDuration} days</span>
+            </div>
+            <div className="info-item">
+              <label>Status</label>
+              <span className="status-badge">{task.taskStatus}</span>
+            </div>
+            <div className="info-item full-width">
+              <label>Description</label>
+              <p className="task-description">{task.taskDescription}</p>
+            </div>
+            <div className="info-item full-width">
+              <label>Technologies</label>
+              <div className="tech-tags">
+                {task.technologies?.split(',').map((tech, index) => (
+                  <span key={index} className="tech-tag">{tech.trim()}</span>
+                ))}
+              </div>
+            </div>
+            {task.dependancies && (
+              <div className="info-item full-width">
+                <label>Dependencies</label>
+                <p className="dependencies">{task.dependancies}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="task-actions">
+            <button className="delete-all-files-btn" onClick={deleteAllFiles}>
+              🗑️ Delete All Files
+            </button>
+            <button className="delete-task-btn" onClick={deleteTask}>
+              ❌ Delete Task
+            </button>
+          </div>
+        </div>
+      ))}
+
+      {/* File Management Tabs */}
+      <div className="file-tabs-container">
+        <div className="file-tabs-nav">
+          <button
+            className={`tab-btn ${activeTab === 0 ? 'active' : ''}`}
+            onClick={() => setActiveTab(0)}
+          >
+            📄 Task Info
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 1 ? 'active' : ''}`}
+            onClick={() => setActiveTab(1)}
+          >
+            🖼️ Images
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 2 ? 'active' : ''}`}
+            onClick={() => setActiveTab(2)}
+          >
+            🎵 Audio
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 3 ? 'active' : ''}`}
+            onClick={() => setActiveTab(3)}
+          >
+            📁 ZIP Files
+          </button>
+        </div>
+
+        <div className="file-tab-content">
+          {/* Task Info Tab */}
+          {activeTab === 0 && (
+            <div className="file-category">
+              <div className="upload-section">
+                <h3>Upload Task Information Files</h3>
+                <div className="file-upload-area">
+                  <input
+                    type="file"
+                    data-upload-type="taskInfo"
+                    onChange={(e) => setTaskInfo(e.target.files[0])}
+                    className="file-input"
+                    accept=".pdf,.doc,.docx,.txt"
+                  />
+                  <button
+                    className="upload-btn"
+                    onClick={() => uploadFile(taskInfo, 'taskInfo', 'http://localhost:5228/api/TaskInfoUpload/ZipUpload')}
+                    disabled={uploading.taskInfo || !taskInfo}
+                  >
+                    {uploading.taskInfo ? 'Uploading...' : 'Upload File'}
+                  </button>
                 </div>
+              </div>
+
+              <div className="files-list">
+                <h4>Task Information Files ({basicNames.length})</h4>
+                {basicNames.length === 0 ? (
+                  <div className="empty-files">No files uploaded yet</div>
+                ) : (
+                  <div className="file-items">
+                    {basicNames.map((file) => (
+                      <div key={file.fileId} className="file-item">
+                        <div className="file-info">
+                          <span className="file-icon">📄</span>
+                          <span className="file-name" onClick={() => downloadFile(file.filePath, file.fileName)}>
+                            {file.fileName}
+                          </span>
+                        </div>
+                        <button
+                          className="delete-file-btn"
+                          onClick={() => deleteFile(file.fileId, getBasicFileNames)}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Images Tab */}
+          {activeTab === 1 && (
+            <div className="file-category">
+              <div className="upload-section">
+                <h3>Upload Images</h3>
+                <div className="file-upload-area">
+                  <input
+                    type="file"
+                    data-upload-type="img"
+                    onChange={(e) => setImg(e.target.files[0])}
+                    className="file-input"
+                    accept="image/*"
+                  />
+                  <button
+                    className="upload-btn"
+                    onClick={() => uploadFile(img, 'img', 'http://localhost:5228/api/TaskImageUpload/ImgUpload')}
+                    disabled={uploading.img || !img}
+                  >
+                    {uploading.img ? 'Uploading...' : 'Upload Image'}
+                  </button>
                 </div>
-              <br/> 
-              <Form.Group as={Col} className="mb-3">
-              <Form.Label>Task Info Files: </Form.Label>
-              <div className="ViewItems">
-
-              {basicNames.map((file, index) => (
-                <ul>
-                <li key={file.fileId}>
-                  <button className="downbutton" onClick={() => download(file.localStoragePath, file.fileName)} style={{borderRadius:"7px", padding:"0.5px"}}>{file.fileName}</button>
-                  &nbsp;&nbsp;
-                        <DeleteIcon onClick={()=>DeleteFile(file.fileId)} style={{color:"white"}}></DeleteIcon>
-
-                </li>
-              </ul>
-              ))}
-                
-             </div>
-            </Form.Group>
-            </Form.Group>
-            </div>
-           
-            <div className="project-detail">
-            <h3 className="card-topic">Task Resources</h3>
-            <div className="ViewItems">
-            <Form.Group as={Col} className="mb-3">
-              <Form.Label>Images: </Form.Label>
-              <div style={{ display: "flex" }}>
-                <Form.Control
-                  type="file"
-                  size="sm"
-                  style={{ width: "250px" }}
-                  onChange={HandleImgChange}
-                />
-                <Button
-                  onClick={UploadImg}
-                  style={{ marginLeft: "60px", marginBottom: "4px" }}
-                >
-                  Upload
-                </Button>
-
-                
               </div>
-            </Form.Group>
-          </div>
-          
-            {/* <Form.Group as={Col} className="mb-3">
-              <Form.Label>Videos: </Form.Label>
-              <div style={{ display: "flex" }}>
-                <Form.Control
-                  type="file"
-                  size="sm"
-                  style={{ width: "250px" }}
-                //  onChange={HandleVideoChange}
-                />
-                <Button
-                //  onClick={UploadVideo}
-                  style={{ marginLeft: "60px", marginBottom: "4px" }}
-                >
-                  Upload
-                </Button>
 
-                
-              </div> 
-            </Form.Group>*/}
-<div className="ViewItems">
-            <Form.Group as={Col} className="mb-3">
-              <Form.Label>Audios: </Form.Label>
-              <div style={{ display: "flex" }}>
-                <Form.Control
-                  type="file"
-                  size="sm"
-                  style={{ width: "250px" }}
-                  onChange={HandleAudioChange}
-                />
-                <Button
-                  onClick={UploadAudio}
-                  style={{ marginLeft: "60px", marginBottom: "4px" }}
-                >
-                  Upload
-                </Button>
-
-                
+              <div className="files-list">
+                <h4>Images ({imgNames.length})</h4>
+                {imgNames.length === 0 ? (
+                  <div className="empty-files">No images uploaded yet</div>
+                ) : (
+                  <div className="file-items">
+                    {imgNames.map((file) => (
+                      <div key={file.fileId} className="file-item">
+                        <div className="file-info">
+                          <span className="file-icon">🖼️</span>
+                          <span className="file-name" onClick={() => downloadFile(file.filePath, file.fileName)}>
+                            {file.fileName}
+                          </span>
+                        </div>
+                        <button
+                          className="delete-file-btn"
+                          onClick={() => deleteFile(file.fileId, getImgNames)}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            </Form.Group>
-</div>
-<div className="ViewItems">
-            <Form.Group as={Col} className="mb-3">
-              <Form.Label>Zip Files: </Form.Label>
-              <div style={{ display: "flex" }}>
-                <Form.Control
-                  type="file"
-                  size="sm"
-                  style={{ width: "250px" }}
-                  onChange={HandleZipChange}
-                />
-                <Button
-                  onClick={UploadZip}
-                  style={{ marginLeft: "60px", marginBottom: "4px" }}
-                >
-                  Upload
-                </Button>
+            </div>
+          )}
 
-                
+          {/* Audio Tab */}
+          {activeTab === 2 && (
+            <div className="file-category">
+              <div className="upload-section">
+                <h3>Upload Audio Files</h3>
+                <div className="file-upload-area">
+                  <input
+                    type="file"
+                    data-upload-type="audio"
+                    onChange={(e) => setAudio(e.target.files[0])}
+                    className="file-input"
+                    accept="audio/*"
+                  />
+                  <button
+                    className="upload-btn"
+                    onClick={() => uploadFile(audio, 'audio', 'http://localhost:5228/api/TaskAudioUpload/AudioUpload')}
+                    disabled={uploading.audio || !audio}
+                  >
+                    {uploading.audio ? 'Uploading...' : 'Upload Audio'}
+                  </button>
+                </div>
               </div>
-            </Form.Group>
+
+              <div className="files-list">
+                <h4>Audio Files ({audioNames.length})</h4>
+                {audioNames.length === 0 ? (
+                  <div className="empty-files">No audio files uploaded yet</div>
+                ) : (
+                  <div className="file-items">
+                    {audioNames.map((file) => (
+                      <div key={file.fileId} className="file-item">
+                        <div className="file-info">
+                          <span className="file-icon">🎵</span>
+                          <span className="file-name" onClick={() => downloadFile(file.filePath, file.fileName)}>
+                            {file.fileName}
+                          </span>
+                        </div>
+                        <button
+                          className="delete-file-btn"
+                          onClick={() => deleteFile(file.fileId, getAudioNames)}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
+          )}
+
+          {/* ZIP Files Tab */}
+          {activeTab === 3 && (
+            <div className="file-category">
+              <div className="upload-section">
+                <h3>Upload ZIP Files</h3>
+                <div className="file-upload-area">
+                  <input
+                    type="file"
+                    data-upload-type="zip"
+                    onChange={(e) => setZip(e.target.files[0])}
+                    className="file-input"
+                    accept=".zip,.rar,.7z"
+                  />
+                  <button
+                    className="upload-btn"
+                    onClick={() => uploadFile(zip, 'zip', 'http://localhost:5228/api/TaskZipUpload/ZipUpload')}
+                    disabled={uploading.zip || !zip}
+                  >
+                    {uploading.zip ? 'Uploading...' : 'Upload ZIP'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="files-list">
+                <h4>ZIP Files ({zipNames.length})</h4>
+                {zipNames.length === 0 ? (
+                  <div className="empty-files">No ZIP files uploaded yet</div>
+                ) : (
+                  <div className="file-items">
+                    {zipNames.map((file) => (
+                      <div key={file.fileId} className="file-item">
+                        <div className="file-info">
+                          <span className="file-icon">📁</span>
+                          <span className="file-name" onClick={() => downloadFile(file.filePath, file.fileName)}>
+                            {file.fileName}
+                          </span>
+                        </div>
+                        <button
+                          className="delete-file-btn"
+                          onClick={() => deleteFile(file.fileId, getZipNames)}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-        
-        
-        
-        <div className="project-detail">
-        <h3 className="card-topic">Uploaded Resources</h3>
-          <div className="ViewItems" style={{ display: "flex" }}>
-          
+          )}
+        </div>
+      </div>
 
-            
-
-            <Form.Group as={Col} className="mb-3">
-              <Form.Label>Images: </Form.Label>
-              {imgNames.map((file, index) => (
-                <ul>
-                <li key={file.fileId}><button className="downbutton" onClick={() => download(file.localStoragePath, file.fileName)} style={{borderRadius:"7px", padding:"0.5px"}}>{file.fileName}</button>
-                &nbsp;&nbsp;
-                        <DeleteIcon onClick={()=>DeleteFile(file.fileId)} style={{color:"white"}}></DeleteIcon>
-
-                </li>
-              </ul>
-              ))}
-                
-             
-            </Form.Group>
-
-            {/* <Form.Group as={Col} className="mb-3">
-              <Form.Label>Videos: </Form.Label>
-              {videoNames.map((file, index) => (
-                <ul>
-                <li key={file.fileId}><button onClick={() => download(file.localStoragePath, file.fileName)}  style={{borderRadius:"7px", padding:"0.5px"}}>{file.fileName}</button></li>
-              </ul>
-              ))}
-             
-            </Form.Group> */}
-
-            <Form.Group as={Col} className="mb-3">
-              <Form.Label>Audios: </Form.Label>
-
-              {audioNames.map((file, index) => (
-                <ul>
-                <li key={file.fileId}><button className="downbutton" onClick={() => download(file.localStoragePath, file.fileName)} style={{borderRadius:"7px", padding:"0.5px"}}>{file.fileName}</button>
-                &nbsp;&nbsp;
-                        <DeleteIcon onClick={()=>DeleteFile(file.fileId)} style={{color:"white"}}></DeleteIcon>
-
-                </li>
-              </ul>
-              ))}
-             
-            </Form.Group>
-
-            <Form.Group as={Col} className="mb-3">
-              <Form.Label>Zip Files: </Form.Label>
-
-              {zipNames.map((file, index) => (
-                <ul>
-                <li key={file.fileId}><button className="downbutton" onClick={() => download(file.localStoragePath, file.fileName)} style={{borderRadius:"7px", padding:"0.5px"}}>{file.fileName}</button>
-                &nbsp;&nbsp;
-                        <DeleteIcon onClick={()=>DeleteFile(file.fileId)} style={{color:"white"}}></DeleteIcon>
-</li>
-              </ul>
-              ))}
-             
-            </Form.Group>
-
-
-          </div>
-          </div>
-          <Button style={{marginTop:'20px'}} variant="danger" onClick={DeleteFiles}>Delete Files</Button>
-        </Tab>
-      </Tabs>
+      {/* File Management Note */}
+      <div className="file-note">
+        <p>💡 Click on file names to download them. Use the delete button to remove files.</p>
+      </div>
     </div>
   );
 }

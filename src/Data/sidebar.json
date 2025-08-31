@@ -28,24 +28,7 @@
         ]
     },
     
-    {
-        "title": "Finance",
-        "icon": "bi bi-bank2",
-        "roles": ["1"],
-        "childrens": [
-            {
-                "title": "New budget",
-                "path": "/budget",
-                "roles": ["1"]
-            },
-            {
-                "title": "Invoice",
-                "path": "/transaction",
-                "roles": ["1"]  
-            }
-     
-        ]
-    },
+    
     {
         "title": "Client",
         "icon": "bi bi-person-lines-fill",
@@ -58,15 +41,8 @@
             {
                 "title": "Client list",
                 "path": "/clientlist"
-            },
-            {
-                "title": "Payments",
-                "path": "/payments"   
-            },
-            {
-                "title": "Send mail",
-                "path": "/sendemail"   
             }
+            
         ]
     }
 ]

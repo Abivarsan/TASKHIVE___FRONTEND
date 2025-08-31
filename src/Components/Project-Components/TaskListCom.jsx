@@ -81,6 +81,8 @@ export default function TaskListCom() {
         <thead>
           <th>Task Id</th>
           <th>Task Name</th>
+          <th>Priority</th>
+          <th>TimeDuration</th>
           <th>Task Status</th>
         </thead>
 
@@ -89,6 +91,8 @@ export default function TaskListCom() {
             <tr key={task.taskId} onClick={() => HandleTaskClick(task.taskId)}>
               <td>{task.taskId}</td>
               <td>{task.taskName}</td>
+              <td>{task.priority}</td>
+              <td>{task.timeDuration}</td>
               <td>{task.taskStatus}</td>
             </tr>
           ))}

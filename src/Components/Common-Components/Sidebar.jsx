@@ -8,9 +8,9 @@ export default function Sidebar() {
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <div className="sidebar-brand">
+        {/* <div className="sidebar-brand">
           Navigation
-        </div>
+        </div> */}
       </div>
       
       <nav className="sidebar-nav">

@@ -27,6 +27,10 @@
   overflow: hidden;
 }
 
+.files-header  h1{
+  color: whitesmoke;
+}
+
 .files-header::before {
   content: '';
   position: absolute;

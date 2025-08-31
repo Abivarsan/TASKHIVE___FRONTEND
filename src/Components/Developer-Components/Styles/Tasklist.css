@@ -26,6 +26,9 @@
   position: relative;
   overflow: hidden;
 }
+.tasklist-header h1{
+  color: whitesmoke;
+}
 
 .tasklist-header::before {
   content: '';

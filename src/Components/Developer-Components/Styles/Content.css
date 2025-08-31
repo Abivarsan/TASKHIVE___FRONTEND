@@ -114,6 +114,9 @@
   opacity: 0.7;
 }
 
+.count h1 {
+  color: white;
+}
 /* Team Content Section */
 .TeamContent {
   background: white;

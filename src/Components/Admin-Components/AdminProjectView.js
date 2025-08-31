@@ -333,7 +333,14 @@ export default function AdminProjectView() {
                     <div key={dev.userId} className="team-member-card">
                       <div className="member-info">
                         <div className="member-avatar">
-                          {dev.firstName.charAt(0)}{dev.lastName.charAt(0)}
+                         {dev.profileImageUrl ? (
+            <img src={dev.profileImageUrl} alt={dev.name} />
+          ) : (
+            dev.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("") // fallback: initials if no image
+          )}
                         </div>
                         <div className="member-details">
                           <h4>{dev.firstName} {dev.lastName}</h4>

@@ -27,6 +27,10 @@
   overflow: hidden;
 }
 
+.task-timer-header h1{
+  color: whitesmoke;
+}
+
 .task-timer-header::before {
   content: '';
   position: absolute;

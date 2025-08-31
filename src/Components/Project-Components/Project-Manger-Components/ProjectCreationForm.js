@@ -72,17 +72,7 @@ export default function ProjectCreationForm() {
     }
   }, [startDate, dueDate]);
 
-  // Send email notification
-  const sendEmail = async (projectId, clientId, projectName) => {
-    const urlEmail = `http://localhost:5228/api/EmailSend?projectId=${projectId}&clientId=${clientId}&projectName=${projectName}`;
-    try {
-      await axios.post(urlEmail, {});
-      alert("Email notification sent!");
-    } catch (error) {
-      console.error("Email sending failed:", error);
-      alert("Failed to send email notification");
-    }
-  };
+
 
   // Form validation
   const validateForm = () => {
@@ -136,14 +126,11 @@ export default function ProjectCreationForm() {
         TimeLine: timeline,
       };
 
-      const url = `http://localhost:5228/api/CreateProject?id=${userId}`;
+      const url = `http://localhost:5228/api/PMCreateProject?id=${userId}`;
       const response =await axios.post(url, data);
 
-      const createdProject = response.data; // backend should return projectId + clientId etc.
+     // backend should return projectId + clientId etc.
       alert("Project created successfully!");
-
-      
-   await sendEmail(createdProject.projectId, createdProject.clientId, createdProject.projectName);
 
       
       // Reset form

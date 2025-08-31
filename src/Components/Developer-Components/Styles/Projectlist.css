@@ -49,6 +49,10 @@
   z-index: 2;
 }
 
+.projectlist-header  h1 {
+  color: whitesmoke;
+}
+
 .projectlist-title::before {
   content: '📋';
   font-size: 36px;

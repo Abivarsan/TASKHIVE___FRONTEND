@@ -48,6 +48,10 @@
   position: relative;
   z-index: 2;
 }
+.team-header h1 {
+  color: whitesmoke;
+  
+}
 
 .team-title::before {
   content: '👥';

@@ -27,6 +27,10 @@
   overflow: hidden;
 }
 
+.task-header h1{
+  color: whitesmoke;
+}
+
 .task-header::before {
   content: '';
   position: absolute;

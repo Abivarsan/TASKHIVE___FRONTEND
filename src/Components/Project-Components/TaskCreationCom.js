@@ -1,276 +1,382 @@
-import React, { useState } from "react";
+// TaskCreationCom.js - Modern Material UI Design
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-
-import TextField from "@mui/material/TextField";
-
-import "./Styles/FormStyle.css";
 import { useLocation, useNavigate } from "react-router-dom";
-
-import InputGroup from "react-bootstrap/InputGroup";
+import "./Styles/TaskCreationCom.css";
 
 export default function TaskCreationCom() {
-  const [validated, setValidated] = useState(false);
-
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    taskName: "",
+    description: "",
+    technologies: "",
+    dependencies: "",
+    priority: "Medium",
+    createdDate: "",
+    dueDate: "",
+    timeDuration: 0
+  });
 
-  const [taskName, setTaskName] = useState("");
-  const [description, setDescription] = useState("");
-  const [technologies, setTechnologies] = useState("");
-  const [dependancies, setDependancies] = useState("");
-  const [priority, setPriority] = useState("");
+  // Other state
+  const [formErrors, setFormErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
-  const [createdDate, setCreatedDate] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const selectedDevId = location.state?.selectedDevId;
+  const selectedId = location.state?.selectedId;
 
-  const [timeDuration, setTimeDuration] = useState();
+  // Set current date as default for created date
+  useEffect(() => {
+    const currentDate = new Date().toISOString().split("T")[0];
+    setFormData(prev => ({
+      ...prev,
+      createdDate: currentDate
+    }));
+  }, []);
 
-  const selectedDevId = location.state.selectedDevId;
+  // Calculate time duration when dates change
+  useEffect(() => {
+    if (formData.createdDate && formData.dueDate) {
+      const startDate = new Date(formData.createdDate);
+      const endDate = new Date(formData.dueDate);
+      const timeDiff = endDate.getTime() - startDate.getTime();
+      const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      
+      setFormData(prev => ({
+        ...prev,
+        timeDuration: daysDiff > 0 ? daysDiff : 0
+      }));
+    }
+  }, [formData.createdDate, formData.dueDate]);
 
-  const selectedId = location.state.selectedId;
+  // Handle form input changes
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
 
-  console.log("task page :" + selectedDevId + " " + selectedId);
-
-  const handleTNameChange = (value) => {
-    setTaskName(value);
+    // Clear error when user starts typing
+    if (formErrors[field]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [field]: ""
+      }));
+    }
   };
 
-  const handleDescriptionChange = (value) => {
-    setDescription(value);
-  };
+  // Form validation
+  const validateForm = () => {
+    const errors = {};
+    let isValid = true;
 
-  const handleTechChange = (value) => {
-    setTechnologies(value);
-  };
+    // Check required fields
+    const requiredFields = ['taskName', 'description', 'technologies', 'priority', 'createdDate', 'dueDate'];
+    
+    requiredFields.forEach(field => {
+      if (!formData[field] || !formData[field].toString().trim()) {
+        errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')} is required`;
+        isValid = false;
+      }
+    });
 
-  const handleDependancyChange = (value) => {
-    setDependancies(value);
-  };
-
-  const handlePriorityChange = (value) => {
-    setPriority(value);
-  };
-
-  const sdate = new Date(createdDate);
-  const ddate = new Date(dueDate);
-
-  function getDaysBetweenDates(startDate, endDate) {
-    // Ensure both dates are valid Date objects
-    if (!(startDate instanceof Date) || !(endDate instanceof Date)) {
-      return null; // Handle invalid dates
+    // Validate dates
+    if (formData.createdDate && formData.dueDate) {
+      const startDate = new Date(formData.createdDate);
+      const endDate = new Date(formData.dueDate);
+      
+      if (endDate <= startDate) {
+        errors.dueDate = 'Due date must be after the created date';
+        isValid = false;
+      }
     }
 
-    const oneDay = 1000 * 60 * 60 * 24; // Milliseconds in one day
-    const differenceInMs = endDate.getTime() - startDate.getTime();
-
-    // Math.floor rounds down to the nearest whole day
-    return Math.floor(differenceInMs / oneDay);
-  }
-
-  var time = getDaysBetweenDates(sdate, ddate);
-
-  // const currentDate = new Date().toISOString().split("T")[0];
-
-  const handleAssign = (event) => {
-    setTimeDuration(time);
-    console.log(time);
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-      alert("Input the required fields");
-    } else {
-      event.preventDefault(); // Prevent default form submission
-      // Form is valid, proceed with data submission
-      const data = {
-        TaskName: taskName,
-        TaskDescription: description,
-        Technology: technologies,
-        Dependancy: dependancies,
-        Priority: priority,
-        TimeDuration: time,
-        ProjectId: selectedId,
-        DeveloperId: selectedDevId,
-        CreatedDate: createdDate,
-        DueDate: dueDate,
-      };
-
-      console.log(data);
-
-      const url = "http://localhost:5228/api/TaskCreation";
-
-      axios
-        .post(url, data)
-        .then((response) => {
-          console.log("**");
-
-          alert("Task created");
-          console.log(response.data);
-
-          setValidated(false);
-
-          window.location.reload();
-        })
-        .catch((error) => {
-          alert(error);
-          console.log(error);
-        });
+    // Validate task name length
+    if (formData.taskName && formData.taskName.length < 3) {
+      errors.taskName = 'Task name must be at least 3 characters long';
+      isValid = false;
     }
 
-    setValidated(true);
+    // Validate description length
+    if (formData.description && formData.description.length < 10) {
+      errors.description = 'Description must be at least 10 characters long';
+      isValid = false;
+    }
+
+    setFormErrors(errors);
+    return isValid;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormSubmitted(true);
+
+    if (!validateForm()) {
+      alert('Please fix all errors before submitting');
+      return;
+    }
+
+    if (!selectedDevId || !selectedId) {
+      alert('Missing developer ID or project ID. Please try again.');
+      return;
+    }
+
+    setLoading(true);
+
+    const data = {
+      TaskName: formData.taskName,
+      TaskDescription: formData.description,
+      Technology: formData.technologies,
+      Dependancy: formData.dependencies,
+      Priority: formData.priority,
+      TimeDuration: formData.timeDuration,
+      ProjectId: selectedId,
+      DeveloperId: selectedDevId,
+      CreatedDate: formData.createdDate,
+      DueDate: formData.dueDate,
+    };
+
+    try {
+      console.log('Sending data:', data);
+      const response = await axios.post("http://localhost:5228/api/TaskCreation", data);
+      
+      console.log("Task created successfully:", response.data);
+      alert("Task created successfully!");
+      
+      // Clear form
+      clearForm();
+      
+      // Navigate back or reload
+      setTimeout(() => {
+        navigate(-1); // Go back to previous page
+      }, 1000);
+
+    } catch (error) {
+      console.error("Task creation failed:", error);
+      if (error.response?.data?.message) {
+        alert(`Error: ${error.response.data.message}`);
+      } else {
+        alert("Failed to create task. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Clear form
+  const clearForm = () => {
+    const currentDate = new Date().toISOString().split("T")[0];
+    setFormData({
+      taskName: "",
+      description: "",
+      technologies: "",
+      dependencies: "",
+      priority: "Medium",
+      createdDate: currentDate,
+      dueDate: "",
+      timeDuration: 0
+    });
+    setFormErrors({});
+    setFormSubmitted(false);
+  };
+
+  // Handle back navigation
+  const handleBack = () => {
+    if (window.confirm("Are you sure you want to go back? Any unsaved changes will be lost.")) {
+      navigate(-1);
+    }
   };
 
   return (
-    <div>
-      <Form noValidate validated={validated} onSubmit={handleAssign}>
-        <div className="Section">
-          <h3 className="SectionHeading">Task Initialization</h3>
-          <Row className="mb-3">
-            <Form.Group as={Col}>
-              <Form.Label htmlFor="taskName">Task Name:</Form.Label>
-              <InputGroup hasValidation>
-                <Form.Control
-                  autoFocus
-                  required
-                  type="text"
-                  style={{ color: "black", fontSize: "18px" }}
-
-                  placeholder="Task Name"
-                  id="taskName"
-                  onChange={(e) => handleTNameChange(e.target.value)}
-                />
-
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                <Form.Control.Feedback type="invalid">
-                  Please enter task name.
-                </Form.Control.Feedback>
-              </InputGroup>
-            </Form.Group>
-          </Row>
-
-          <Form.Group className="mb-3">
-            <Form.Label htmlFor="description">Task Description:</Form.Label>
-            <InputGroup hasValidation>
-              <Form.Control
-                required
-                placeholder="Enter task description"
-                style={{ color: "black", fontSize: "18px" }}
-
-                type="text"
-                id="description"
-                onChange={(e) => handleDescriptionChange(e.target.value)}
-              />
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-              <Form.Control.Feedback type="invalid">
-                Please enter task description.
-              </Form.Control.Feedback>
-            </InputGroup>
-          </Form.Group>
-
-          <Row className="mb-3">
-            <Form.Group className="mb-3">
-              <Form.Label>Technologies:</Form.Label>
-              <InputGroup hasValidation>
-                <Form.Control
-                  required
-                  placeholder="Enter technologies used"
-                  style={{ color: "black", fontSize: "18px" }}
-
-                  type="text"
-                  id="technologies"
-                  onChange={(e) => handleTechChange(e.target.value)}
-                />
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                <Form.Control.Feedback type="invalid">
-                  Please enter task name.
-                </Form.Control.Feedback>
-              </InputGroup>
-            </Form.Group>
-
-            <Row className="mb-3" style={{width:"70%"}}>
-            <Form.Group as={Col}>
-              <Form.Label>Created Date:</Form.Label>
-              <TextField
-                required
-                style={{ backgroundColor: "whitesmoke", borderRadius: "10px", width:"300px"}}
-                margin="dense"
-                id="last_updated"
-                type="date"
-                fullWidth
-                value={createdDate}
-                onChange={(e) => setCreatedDate(e.target.value)}
-              />
-            </Form.Group>
-
-            <Form.Group as={Col}>
-              <Form.Label>Due Date:</Form.Label>
-              <TextField
-                required
-                style={{ backgroundColor: "whitesmoke", borderRadius: "10px", width:"300px"}}
-                margin="dense"
-                id="last_updated"
-                type="date"
-                fullWidth
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-              />
-            </Form.Group>
-          </Row>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Dependancies:</Form.Label>
-              <InputGroup hasValidation>
-                <Form.Control
-                  required
-                  placeholder="Enter dependancies"
-                  style={{ color: "black", fontSize: "18px" }}
-
-                  type="text"
-                  id="dependancies"
-                  onChange={(e) => handleDependancyChange(e.target.value)}
-                />
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                <Form.Control.Feedback type="invalid">
-                  Please enter task dependancies.
-                </Form.Control.Feedback>
-              </InputGroup>
-            </Form.Group>
-          </Row>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Priority:</Form.Label>
-            <InputGroup hasValidation>
-              <Form.Control
-                required
-                placeholder="Enter priority level"
-                type="number"
-                style={{ color: "black", fontSize: "18px" }}
-
-                id="priority"
-                onChange={(e) => handlePriorityChange(e.target.value)}
-              />
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-              <Form.Control.Feedback type="invalid">
-                Please enter priority level.
-              </Form.Control.Feedback>
-            </InputGroup>
-          </Form.Group>
-
-         
-{/* 
-          ----------------------File upload part-----------------------
-          <Form.Group as={Col} className="mb-3">
-            <Form.Label>Upload:</Form.Label>
-            <Form.Control type="file" size="sm" style={{ width: "250px" }} />
-          </Form.Group> */}
+    <div className="task-creation-container">
+      <div className="task-creation-card">
+        <div className="task-creation-header">
+          <button className="back-btn" onClick={handleBack}>
+            ← Back
+          </button>
+          <h2>Create New Task</h2>
+          <p className="header-subtitle">
+            Project ID: #{selectedId} • Developer ID: #{selectedDevId}
+          </p>
         </div>
 
-        <Button type="submit">Assign</Button>
-      </Form>
+        <form className="task-creation-form" onSubmit={handleSubmit}>
+          {/* Task Information Section */}
+          <div className="form-section">
+            <h3 className="section-title">Task Information</h3>
+            
+            <div className="form-row">
+              <div className="form-group">
+                <label>Task Name</label>
+                <input
+                  type="text"
+                  value={formData.taskName}
+                  onChange={(e) => handleInputChange('taskName', e.target.value)}
+                  className={formErrors.taskName ? 'error' : ''}
+                  placeholder="Enter task name"
+                  required
+                />
+                {formErrors.taskName && <span className="error-message">{formErrors.taskName}</span>}
+              </div>
+
+              <div className="form-group">
+                <label>Priority</label>
+                <select
+                  value={formData.priority}
+                  onChange={(e) => handleInputChange('priority', e.target.value)}
+                  className={formErrors.priority ? 'error' : ''}
+                  required
+                >
+                  <option value="">Select Priority</option>
+                  <option value="Low">🟢 Low</option>
+                  <option value="Medium">🟡 Medium</option>
+                  <option value="High">🟠 High</option>
+                  <option value="Critical">🔴 Critical</option>
+                </select>
+                {formErrors.priority && <span className="error-message">{formErrors.priority}</span>}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Task Description</label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                className={formErrors.description ? 'error' : ''}
+                placeholder="Describe the task requirements and objectives"
+                rows="4"
+                required
+              />
+              {formErrors.description && <span className="error-message">{formErrors.description}</span>}
+            </div>
+          </div>
+
+          {/* Technical Details Section */}
+          <div className="form-section">
+            <h3 className="section-title">Technical Details</h3>
+            
+            <div className="form-group">
+              <label>Technologies</label>
+              <input
+                type="text"
+                value={formData.technologies}
+                onChange={(e) => handleInputChange('technologies', e.target.value)}
+                className={formErrors.technologies ? 'error' : ''}
+                placeholder="e.g., React, Node.js, MongoDB, CSS"
+                required
+              />
+              {formErrors.technologies && <span className="error-message">{formErrors.technologies}</span>}
+            </div>
+
+            <div className="form-group">
+              <label>Dependencies (Optional)</label>
+              <textarea
+                value={formData.dependencies}
+                onChange={(e) => handleInputChange('dependencies', e.target.value)}
+                className={formErrors.dependencies ? 'error' : ''}
+                placeholder="List any dependencies or prerequisites for this task"
+                rows="3"
+              />
+              {formErrors.dependencies && <span className="error-message">{formErrors.dependencies}</span>}
+            </div>
+          </div>
+
+          {/* Timeline Section */}
+          <div className="form-section">
+            <h3 className="section-title">Timeline</h3>
+            
+            <div className="form-row">
+              <div className="form-group">
+                <label>Created Date</label>
+                <input
+                  type="date"
+                  value={formData.createdDate}
+                  onChange={(e) => handleInputChange('createdDate', e.target.value)}
+                  className={formErrors.createdDate ? 'error' : ''}
+                  required
+                />
+                {formErrors.createdDate && <span className="error-message">{formErrors.createdDate}</span>}
+              </div>
+
+              <div className="form-group">
+                <label>Due Date</label>
+                <input
+                  type="date"
+                  value={formData.dueDate}
+                  onChange={(e) => handleInputChange('dueDate', e.target.value)}
+                  className={formErrors.dueDate ? 'error' : ''}
+                  min={formData.createdDate}
+                  required
+                />
+                {formErrors.dueDate && <span className="error-message">{formErrors.dueDate}</span>}
+              </div>
+
+              <div className="form-group">
+                <label>Duration</label>
+                <div className="duration-display">
+                  <span className="duration-value">{formData.timeDuration}</span>
+                  <span className="duration-unit">days</span>
+                </div>
+                <small className="duration-note">
+                  Automatically calculated from dates
+                </small>
+              </div>
+            </div>
+          </div>
+
+          {/* Form Actions */}
+          <div className="form-actions">
+            <button 
+              type="button" 
+              className="btn-secondary"
+              onClick={clearForm}
+              disabled={loading}
+            >
+              Clear Form
+            </button>
+            <button 
+              type="submit" 
+              className="btn-primary"
+              disabled={loading}
+            >
+              {loading ? 'Creating Task...' : 'Create Task'}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Task Summary Preview */}
+      {formData.taskName && (
+        <div className="task-preview-card">
+          <h3>Task Preview</h3>
+          <div className="preview-content">
+            <div className="preview-item">
+              <strong>Task:</strong> {formData.taskName}
+            </div>
+            <div className="preview-item">
+              <strong>Priority:</strong> 
+              <span className={`priority-badge priority-${formData.priority.toLowerCase()}`}>
+                {formData.priority}
+              </span>
+            </div>
+            <div className="preview-item">
+              <strong>Duration:</strong> {formData.timeDuration} days
+            </div>
+            <div className="preview-item">
+              <strong>Technologies:</strong> {formData.technologies}
+            </div>
+            {formData.dependencies && (
+              <div className="preview-item">
+                <strong>Dependencies:</strong> {formData.dependencies.substring(0, 50)}...
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

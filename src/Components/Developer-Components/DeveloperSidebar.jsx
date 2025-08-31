@@ -12,8 +12,8 @@ function DeveloperSidebar() {
     <div className="sidebar">
     <hr />
     <span className="workspace">
-     <font size="7" align="center">P</font><font>roxima workspace</font>
-     <hr></hr>
+     {/* <font size="7" align="center">T</font><font>askhive workspace</font>
+     <hr></hr> */}
     </span>
     { items.map((item, index) => <SidebarItem key={index} item={item} />) }
     <Logout/>
