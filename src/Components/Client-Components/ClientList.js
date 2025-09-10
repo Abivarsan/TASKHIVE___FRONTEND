@@ -17,7 +17,7 @@ export default function ClientList() {
 
   const fetchClients = async () => {
     try {
-      const result = await apiRequest("http://localhost:5228/api/Client/list");
+      const result = await apiRequest("http://localhost:5228/api/Admin/ClientList");
       setClients(result);
     } catch (err) {
       console.error("Error fetching clients:", err);
@@ -33,7 +33,7 @@ export default function ClientList() {
     } else {
       try {
         const result = await apiRequest(
-          `http://localhost:5228/api/Client/search?term=${term}`
+          `http://localhost:5228/api/Admin/ClientSearch/${term}`
         );
         setClients(result);
       } catch (err) {

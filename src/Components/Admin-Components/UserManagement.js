@@ -17,7 +17,7 @@ export default function UserManagement() {
 
   const fetchData = async () => {
     try {
-      const result = await apiRequest("http://localhost:5228/api/User/list");
+      const result = await apiRequest("http://localhost:5228/api/Admin/UserList");
       setData(result);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -32,7 +32,7 @@ export default function UserManagement() {
     } else {
       try {
         const result = await apiRequest(
-          `http://localhost:5228/api/User/search?term=${encodeURIComponent(searchTerm)}`
+          `http://localhost:5228/api/Admin/UserSearch/${encodeURIComponent(searchTerm)}`
         );
         setData(result);
       } catch (error) {

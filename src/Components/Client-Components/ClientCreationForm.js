@@ -117,7 +117,7 @@ export default function ClientCreationForm() {
 
     try {
       console.log('Sending data:', data);
-      const response = await apiRequest('http://localhost:5228/api/Client/register', 'POST', data);
+      const response = await apiRequest('http://localhost:5228/api/Admin/ClientRegister', 'POST', data);
       console.log('API Response:', response);
 
       const randomPassword = response;

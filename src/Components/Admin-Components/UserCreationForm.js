@@ -135,8 +135,8 @@ export default function UserCreationForm() {
     const fetchData = async () => {
       try {
         const [categoriesRes, jobRolesRes] = await Promise.all([
-          axios.get('http://localhost:5228/api/UserCategory'),
-          axios.get('http://localhost:5228/api/JobRole')
+          axios.get('http://localhost:5228/api/User/UserCategories'),
+          axios.get('http://localhost:5228/api/User/jobRoles')
         ]);
         setUsersCategories(categoriesRes.data);
         setJobRoles(jobRolesRes.data);
@@ -220,7 +220,7 @@ export default function UserCreationForm() {
 
       console.log('Sending data:', submitData);
       
-      const response = await apiRequest('http://localhost:5228/api/User/register', 'POST', submitData);
+      const response = await apiRequest('http://localhost:5228/api/Admin/UserRegister', 'POST', submitData);
       
       const randomPassword = response;
       setRandomPassword(randomPassword);

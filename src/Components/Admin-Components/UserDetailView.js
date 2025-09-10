@@ -19,7 +19,7 @@ const UserDetailView = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5228/api/User/${userId}`);
+        const response = await axios.get(`http://localhost:5228/api/Admin/${userId}`);
         setUserData(response.data);
         setIsActive(response.data.isActive);
         setLoading(false);
@@ -52,7 +52,7 @@ const UserDetailView = () => {
     }
 
     try {
-      await axios.post('http://localhost:5228/api/User/deactivate-user', { userId });
+      await axios.post('http://localhost:5228/api/Admin/Deactivate-User', { userId });
       alert("User deactivated successfully.");
       window.location.reload();
       setErrorMessage(null);
@@ -68,7 +68,7 @@ const UserDetailView = () => {
     }
 
     try {
-      await axios.post('http://localhost:5228/api/User/reactivate-user', { userId });
+      await axios.post('http://localhost:5228/api/Admin/Reactivate-User', { userId });
       alert("User reactivated successfully.");
       window.location.reload();
       setErrorMessage(null);

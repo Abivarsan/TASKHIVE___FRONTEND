@@ -14,7 +14,7 @@ const ClientDetailView = () => {
 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`http://localhost:5228/api/Client/${clientId}`);
+      const response = await axios.get(`http://localhost:5228/api/Admin/${clientId}`);
       setUserData(response.data);
     } catch (error) {
       setErrorMessage('Error fetching user data.');
@@ -31,7 +31,7 @@ const ClientDetailView = () => {
   const deactivateUser = async () => {
     if (!window.confirm('Are you sure you want to deactivate the user?')) return;
     try {
-      await axios.post('http://localhost:5228/api/Client/deactivate-client', { clientId });
+      await axios.post('http://localhost:5228/api/Admin/Deactivate-Client', { clientId });
       alert('User deactivated successfully.');
       setErrorMessage(null);
       fetchUserData();
@@ -43,7 +43,7 @@ const ClientDetailView = () => {
   const reactivateUser = async () => {
     if (!window.confirm('Are you sure you want to reactivate the user?')) return;
     try {
-      await axios.post('http://localhost:5228/api/Client/reactivate-client', { clientId });
+      await axios.post('http://localhost:5228/api/Admin/Reactivate-Client', { clientId });
       alert('User reactivated successfully.');
       setErrorMessage(null);
       fetchUserData();
