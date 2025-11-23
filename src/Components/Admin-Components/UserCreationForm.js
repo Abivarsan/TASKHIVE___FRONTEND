@@ -160,9 +160,14 @@ export default function UserCreationForm() {
       }
     });
 
-    // Validate NIC
-    if (formData.nic.length !== 12) {
-      errors.nic = 'NIC must have 12 digits';
+    const nic = formData.nic.trim().toUpperCase();
+
+    // Regex patterns
+    const oldNicPattern = /^[0-9]{9}[VX]$/;   // 9 digits + V/X
+    const newNicPattern = /^[0-9]{12}$/;      // 12 digits only
+
+    if (!oldNicPattern.test(nic) && !newNicPattern.test(nic)) {
+      errors.nic = 'Invalid Sri Lankan NIC. Use old format (123456789V) or new format (200012345678).';
       isValid = false;
     }
 
@@ -237,7 +242,7 @@ export default function UserCreationForm() {
 
     } catch (error) {
       console.error("User registration failed:", error);
-      alert("Failed to register user. Username may already exist.");
+      alert("Failed to register user. User email may already exist.");
     } finally {
       setLoading(false);
     }
@@ -365,7 +370,7 @@ export default function UserCreationForm() {
                   value={formData.nic}
                   onChange={(e) => handleInputChange('nic', e.target.value)}
                   className={formErrors.nic ? 'error' : ''}
-                  placeholder="Enter 12-digit NIC"
+                  placeholder="Enter NIC number here"
                   maxLength="12"
                 />
                 {formErrors.nic && <span className="error-message">{formErrors.nic}</span>}
@@ -525,6 +530,7 @@ export default function UserCreationForm() {
               {loading ? 'Creating User...' : 'Create User'}
             </button>
           </div>
+          
         </form>
       </div>
     </div>

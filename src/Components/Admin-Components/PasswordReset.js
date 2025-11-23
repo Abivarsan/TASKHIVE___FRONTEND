@@ -1,127 +1,245 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Button, Row, Col, Alert } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import {
+  Box,
+  Paper,
+  TextField,
+  Button,
+  Alert,
+  Typography,
+  Grid,
+  Container,
+  InputAdornment,
+  IconButton
+} from '@mui/material';
+import {
+  Visibility,
+  VisibilityOff,
+  LockReset
+} from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode';
-import './styles/UserCreationForm.css';
+import { jwtDecode } from 'jwt-decode';
 import apiRequest from '../../Auth/ApiService';
+import '../Admin-Components/styles/PasswordRest.css';
 
 function PasswordReset() {
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [formData, setFormData] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [showPassword, setShowPassword] = useState({
+    old: false,
+    new: false,
+    confirm: false
+  });
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
-  const [alertVariant, setAlertVariant] = useState('success');
+  const [alertSeverity, setAlertSeverity] = useState('success');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const handleChange = (field) => (event) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: event.target.value
+    }));
+  };
 
-  
+  const togglePasswordVisibility = (field) => {
+    setShowPassword(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    if (newPassword.length < 10) {
+    if (formData.newPassword.length < 10) {
       setAlertMessage('Password must be at least 10 characters long.');
-      setAlertVariant('danger');
+      setAlertSeverity('error');
       setShowAlert(true);
+      setLoading(false);
       return;
     }
-    
-    if (newPassword !== confirmPassword) {
+
+    if (formData.newPassword !== formData.confirmPassword) {
       setAlertMessage('Passwords do not match.');
-      setAlertVariant('danger');
+      setAlertSeverity('error');
       setShowAlert(true);
+      setLoading(false);
       return;
     }
 
     const token = localStorage.getItem('accessToken');
     const decodedToken = jwtDecode(token);
-    console.log("userName: ",decodedToken.UserName);
-    console.log("oldPassword: ", oldPassword);
-    console.log("newPassword: ", newPassword);
-    const userName = decodedToken.userName;
 
     try {
-      const response = await apiRequest('http://localhost:5228/api/Account/password-reset', 'POST', {
+      await apiRequest('http://localhost:5228/api/Account/password-reset', 'POST', {
         userName: decodedToken.UserName,
-        oldPassword: oldPassword,
-        newPassword:newPassword,
+        oldPassword: formData.oldPassword,
+        newPassword: formData.newPassword,
       });
+      
       setAlertMessage('Password reset successfully!');
-      navigate("/");
+      setAlertSeverity('success');
+      setShowAlert(true);
+      
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
       
     } catch (error) {
-      setAlertMessage('Failed to reset password. Please try again.');
-      setAlertVariant('danger');
+      setAlertMessage('Failed to reset password. Please check your old password and try again.');
+      setAlertSeverity('error');
       setShowAlert(true);
+    } finally {
+      setLoading(false);
     }
   };
 
   const clearForm = () => {
-    setOldPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
+    setFormData({
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
+    setShowAlert(false);
   };
 
   return (
-    <div className="content-component">
-      <div className="form_group">
-        <div>
-          <h3>Reset Password</h3>
-        </div>
-        <Form onSubmit={handleSubmit}>
-          
-          <Form.Group className="mb-10" controlId="formGridOldPassword">
-            <Form.Label>Old Password :</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Enter Old Password"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-            />
-          </Form.Group>
+    <Container maxWidth="sm" className="password-reset-container">
+      <Paper elevation={3} className="password-reset-paper">
+        <Box className="password-reset-header">
+          <LockReset color="primary" className="header-icon" />
+          <Typography variant="h4" component="h1" gutterBottom>
+            Reset Password
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            Enter your current password and set a new one
+          </Typography>
+        </Box>
 
-          <Row className="mb-10">
-            <Form.Group as={Col} controlId="formGridNewPassword">
-              <Form.Label>New password :</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Enter New Password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+        <Box component="form" onSubmit={handleSubmit} className="password-reset-form">
+          <TextField
+            fullWidth
+            label="Old Password"
+            type={showPassword.old ? 'text' : 'password'}
+            value={formData.oldPassword}
+            onChange={handleChange('oldPassword')}
+            margin="normal"
+            variant="outlined"
+            required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => togglePasswordVisibility('old')}
+                    edge="end"
+                  >
+                    {showPassword.old ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+          />
+
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="New Password"
+                type={showPassword.new ? 'text' : 'password'}
+                value={formData.newPassword}
+                onChange={handleChange('newPassword')}
+                margin="normal"
+                variant="outlined"
+                required
+                error={formData.newPassword.length > 0 && formData.newPassword.length < 10}
+                helperText={
+                  formData.newPassword.length > 0 && formData.newPassword.length < 10
+                    ? 'Password must be at least 10 characters'
+                    : ''
+                }
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => togglePasswordVisibility('new')}
+                        edge="end"
+                      >
+                        {showPassword.new ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
               />
-            </Form.Group>
+            </Grid>
 
-            <Form.Group as={Col} controlId="formGridConfirmPassword">
-              <Form.Label>Confirm Password :</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Confirm Password"
+                type={showPassword.confirm ? 'text' : 'password'}
+                value={formData.confirmPassword}
+                onChange={handleChange('confirmPassword')}
+                margin="normal"
+                variant="outlined"
+                required
+                error={formData.confirmPassword.length > 0 && formData.newPassword !== formData.confirmPassword}
+                helperText={
+                  formData.confirmPassword.length > 0 && formData.newPassword !== formData.confirmPassword
+                    ? 'Passwords do not match'
+                    : ''
+                }
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => togglePasswordVisibility('confirm')}
+                        edge="end"
+                      >
+                        {showPassword.confirm ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
               />
-            </Form.Group>
-          </Row>
+            </Grid>
+          </Grid>
 
-          <Row className="mb-10">
-            <Col>
-                <Button variant="primary" type="button"  id="resetButton" onClick={clearForm}>
-                  Clear
-                </Button>
-            </Col>
+          {showAlert && (
+            <Alert 
+              severity={alertSeverity} 
+              className="alert-message"
+              onClose={() => setShowAlert(false)}
+            >
+              {alertMessage}
+            </Alert>
+          )}
 
-            <Col>
-              <Button variant="secondary" type="submit" id="submitButton">
-                Reset
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-        <br />
-        {showAlert && <Alert variant={alertVariant}>{alertMessage}</Alert>}
-      </div>
-    </div>
+          <Box className="action-buttons">
+            <Button
+              variant="outlined"
+              onClick={clearForm}
+              disabled={loading}
+              className="clear-button"
+            >
+              Clear
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={loading}
+              className="submit-button"
+            >
+              {loading ? 'Resetting...' : 'Reset Password'}
+            </Button>
+          </Box>
+        </Box>
+      </Paper>
+    </Container>
   );
 }
 

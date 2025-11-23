@@ -68,7 +68,7 @@ const EditProfileComponent = () => {
       }
 
       try {
-        const response = await apiRequest(`http://localhost:5228/api/User/${userId}`);
+        const response = await apiRequest(`http://localhost:5228/api/Admin/${userId}`);
         console.log('Fetched User Data:', response);
 
         // Format dob if needed

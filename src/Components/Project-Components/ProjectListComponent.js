@@ -12,7 +12,7 @@ export default function ProjectListComponent() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   
-  const url = "http://localhost:5228/api/ViewProjectList";
+  const url = "http://localhost:5228/api/PManager/ProjectList";
 
   useEffect(() => {
     fetchProjects();

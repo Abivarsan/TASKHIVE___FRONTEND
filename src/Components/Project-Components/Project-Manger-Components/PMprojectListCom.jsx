@@ -17,7 +17,7 @@ export default function PMprojectListCom() {
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
   const ProjectManagerId = user?.userId; // "2" (string) → number if needed
-  const url = `http://localhost:5228/api/PmProjectList?id=${ProjectManagerId}`;
+  const url = `http://localhost:5228/api/PManager/ProjectList/${ProjectManagerId}`;
 
     useEffect(() => {
     if (ProjectManagerId) {

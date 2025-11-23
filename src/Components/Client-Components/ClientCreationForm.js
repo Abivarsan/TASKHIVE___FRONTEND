@@ -61,9 +61,14 @@ export default function ClientCreationForm() {
       }
     });
 
-    // Validate NIC
-    if (formData.nic && formData.nic.length !== 12) {
-      errors.nic = 'NIC must have 12 digits';
+    const nic = formData.nic.trim().toUpperCase();
+
+    // Regex patterns
+    const oldNicPattern = /^[0-9]{9}[VX]$/;   // 9 digits + V/X
+    const newNicPattern = /^[0-9]{12}$/;      // 12 digits only
+
+    if (!oldNicPattern.test(nic) && !newNicPattern.test(nic)) {
+      errors.nic = 'Invalid Sri Lankan NIC. Use old format (123456789V) or new format (200012345678).';
       isValid = false;
     }
 
@@ -135,7 +140,7 @@ export default function ClientCreationForm() {
 
     } catch (error) {
       console.error("Client registration failed:", error);
-      alert("Failed to register client. Username may already exist or there was a server error.");
+      alert("Failed to register client. User Email may already exists.");
     } finally {
       setLoading(false);
     }

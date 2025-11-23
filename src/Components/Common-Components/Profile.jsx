@@ -22,7 +22,7 @@ export default function Profile() {
 
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get(`http://localhost:5228/api/User/${userId}`);
+        const response = await axios.get(`http://localhost:5228/api/Admin/${userId}`);
         setUserName(response.data.userName);
         setUserEmail(response.data.email);
         // Use the Firebase‐stored URL (ProfileImageUrl) if present
